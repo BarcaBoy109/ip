@@ -26,46 +26,30 @@ public class Kotha {
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            String command = scanner.nextLine();
-            if (command.equals("bye")) {
-                System.out.println("____________________________________________________________");
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println("____________________________________________________________");
-                break;
-            } else if (command.equals("list")) {
-                stringList();
-            } else if (command.matches("mark (\\d+)")) {
-                int taskId = Integer.parseInt(command.substring(command.indexOf(" ") + 1)) - 1;
-                Task t = listOfTask[taskId];
-                t.markAsDone();
-            } else if (command.matches("unmark (\\d+)")) {
-                int taskId = Integer.parseInt(command.substring(command.indexOf(" ") + 1)) - 1;
-                Task t = listOfTask[taskId];
-                t.markAsNotDone();
-            } else {
-                if (command.matches("todo .+")) {
-                    String description = command.substring("todo ".length());
-                    Task t = new ToDo(description);
-                    addToList(t);
-                } else if (command.matches("deadline .+")) {
-                    int byIndex = command.indexOf(" /by ");
-                    String description = command.substring("deadline ".length(), byIndex);
-                    String by = command.substring(byIndex + " /by ".length());
-                    Task t = new Deadline(description, by);
-                    addToList(t);
-                } else if (command.matches("event .+")) {
-                    int fromIndex = command.indexOf(" /from ");
-                    int toIndex = command.indexOf(" /to ");
-                    String description = command.substring("event ".length(), fromIndex);
-                    String from = command.substring(fromIndex + " /from ".length(), toIndex);
-                    String to = command.substring(toIndex + " /to ".length());
-                    Task t = new Event(description, from, to);
-                    addToList(t);
+            String command = scanner.nextLine().trim();
+            try {
+                if (command.equals("bye")) {
+                    System.out.println("____________________________________________________________");
+                    System.out.println("Bye. Hope to see you again soon!");
+                    System.out.println("____________________________________________________________");
+                    break;
+                } else if (command.equals("list")) {
+                    stringList();
+                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                    changeTaskStatus(command, true);
+                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                    changeTaskStatus(command, false);
+                } else if (command.equals("todo") || command.startsWith("todo ")) {
+                    addTodo(command);
+                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+                    addDeadline(command);
+                } else if (command.equals("event") || command.startsWith("event ")) {
+                    addEvent(command);
                 } else {
-                    Task t = new Task(command);
-                    addToList(t);
+                    throw new KothaException("I don't recognise that command.");
                 }
-
+            } catch (KothaException e) {
+                printError(e.getMessage());
             }
         }
     }
@@ -97,5 +81,83 @@ public class Kotha {
 
     }
 
+    /** Adds a todo after checking that it has a description. */
+    private static void addTodo(String command) throws KothaException {
+        String description = command.substring("todo".length()).trim();
+        if (description.isEmpty()) {
+            throw new KothaException("Please add a description after 'todo'.");
+        }
+        addToList(new ToDo(description));
+    }
 
+    /** Adds a deadline after checking its description and by date. */
+    private static void addDeadline(String command) throws KothaException {
+        int byIndex = command.indexOf(" /by ");
+        if (byIndex <= "deadline".length()) {
+            throw new KothaException("A deadline needs a description and a '/by' date.");
+        }
+
+        String description = command.substring("deadline".length(), byIndex).trim();
+        String by = command.substring(byIndex + " /by ".length()).trim();
+        if (description.isEmpty() || by.isEmpty()) {
+            throw new KothaException("A deadline needs a description and a '/by' date.");
+        }
+        addToList(new Deadline(description, by));
+    }
+
+    /** Adds an event after checking its description, start time, and end time. */
+    private static void addEvent(String command) throws KothaException {
+        int fromIndex = command.indexOf(" /from ");
+        int toIndex = command.indexOf(" /to ");
+        if (fromIndex <= "event".length() || toIndex <= fromIndex) {
+            throw new KothaException("An event needs a description, '/from', and '/to' time.");
+        }
+
+        String description = command.substring("event".length(), fromIndex).trim();
+        String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String to = command.substring(toIndex + " /to ".length()).trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new KothaException("An event needs a description, '/from', and '/to' time.");
+        }
+        addToList(new Event(description, from, to));
+    }
+
+    /** Marks or unmarks a task after checking its one-based task number. */
+    private static void changeTaskStatus(String command, boolean isDone) throws KothaException {
+        String commandWord = isDone ? "mark" : "unmark";
+        String taskNumberText = command.substring(commandWord.length()).trim();
+        if (!taskNumberText.matches("\\d+")) {
+            throw new KothaException("Please provide a valid task number to " + commandWord + ".");
+        }
+
+        int taskIndex;
+        try {
+            taskIndex = Integer.parseInt(taskNumberText) - 1;
+        } catch (NumberFormatException e) {
+            throw new KothaException("Please provide a valid task number to " + commandWord + ".");
+        }
+        if (taskIndex < 0 || taskIndex >= listOfTaskPointer) {
+            throw new KothaException("That task number does not exist.");
+        }
+
+        if (isDone) {
+            listOfTask[taskIndex].markAsDone();
+        } else {
+            listOfTask[taskIndex].markAsNotDone();
+        }
+    }
+
+    /** Displays a consistent error message for invalid commands. */
+    private static void printError(String message) {
+        System.out.println("____________________________________________________________");
+        System.out.println("Oops! " + message);
+        System.out.println("____________________________________________________________");
+    }
+
+    /** Represents an error caused by invalid Kotha command input. */
+    private static class KothaException extends Exception {
+        KothaException(String message) {
+            super(message);
+        }
+    }
 }
