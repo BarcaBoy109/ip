@@ -30,10 +30,35 @@ public class Kotha {
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.println("____________________________________________________________");
                 break;
+            } else if (command.equals("list")) {
+                stringList();
             }
-
-            System.out.println(command);
-            System.out.println("____________________________________________________________");
+            else {
+                addToList(command);
+                System.out.println("____________________________________________________________");
+                System.out.println("added: " + command);
+                System.out.println("____________________________________________________________");
+            }
         }
     }
+
+    // Array containing the list of tasks
+    private static String[] listOfTask = new String[100];
+    // Points to the first free slot in listOfTask (one past the last element put inside)
+    private static byte listOfTaskPointer = 0;
+    private static void addToList(String command) {
+        listOfTask[listOfTaskPointer] = command;
+        listOfTaskPointer++;
+    }
+    private static void stringList() {
+        System.out.println("List");
+        System.out.println("____________________________________________________________");
+        for (byte pointer = 0; pointer < listOfTaskPointer; pointer++) {
+            byte number = (byte) (pointer + 1);
+            System.out.printf("%d. %s%n", number, listOfTask[pointer]);
+        }
+        System.out.println("____________________________________________________________");
+
+    }
+
 }
