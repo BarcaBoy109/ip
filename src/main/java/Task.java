@@ -36,4 +36,9 @@ public class Task {
         System.out.println("Got it master I have added the following task: " + this.toString());
 
     }
+
+    public void printRemoveText() {
+        System.out.println("____________________________________________________________");
+        System.out.println("Got it master I have removed the following task: " + this.toString());
+    }
 }

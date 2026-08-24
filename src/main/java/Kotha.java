@@ -1,5 +1,6 @@
 package main.java;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -45,6 +46,8 @@ public class Kotha {
                     addDeadline(command);
                 } else if (command.equals("event") || command.startsWith("event ")) {
                     addEvent(command);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    deleteTask(command);
                 } else {
                     throw new KothaException("I don't recognise that command.");
                 }
@@ -55,27 +58,32 @@ public class Kotha {
     }
 
     // Array containing the list of tasks
-    private static Task[] listOfTask = new Task[100];
-    // Points to the first free slot in listOfTask (one past the last element put inside)
-    private static byte listOfTaskPointer = 0;
+    private static ArrayList<Task> listOfTask = new ArrayList<>();
 
     private static void addToList(Task task) {
-        listOfTask[listOfTaskPointer] = task;
+        listOfTask.add(task);
         task.printAddText();
-        listOfTaskPointer++;
-        if (listOfTaskPointer == 1) {
-            System.out.println("Hiee you now you have " + listOfTaskPointer + " task in your list.");
+        printNumOfTasks();
+    }
+    private static void printNumOfTasks() {
+        if (listOfTask.size() == 1) {
+            System.out.println("Hiee you now you have " + listOfTask.size() + " task in your list.");
         } else {
-            System.out.println("Hiee you now you have " + listOfTaskPointer + " tasks in your list.");
+            System.out.println("Hiee you now you have " + listOfTask.size() + " tasks in your list.");
         }
         System.out.println("____________________________________________________________");
     }
+    private static void removeFromList(int index) {
+        listOfTask.remove(index);
+        printNumOfTasks();
+    }
+
     private static void stringList() {
         System.out.println("____________________________________________________________");
         System.out.println("Here are the tasks in your list:");
-        for (byte pointer = 0; pointer < listOfTaskPointer; pointer++) {
-            byte number = (byte) (pointer + 1);
-            System.out.printf("%d.%s%n", number, listOfTask[pointer].toString());
+        for (int pointer = 0; pointer < listOfTask.size(); pointer++) {
+            int number = pointer + 1;
+            System.out.printf("%d.%s%n", number, listOfTask.get(pointer).toString());
         }
         System.out.println("____________________________________________________________");
 
@@ -122,6 +130,21 @@ public class Kotha {
         addToList(new Event(description, from, to));
     }
 
+    private static void deleteTask(String command) throws KothaException {
+        String taskNumberText = command.substring("delete".length()).trim();
+        if (!taskNumberText.matches("\\d+")) {
+            throw new KothaException("Cannot delete task number " + taskNumberText + "\nPlease enter an integer");
+        }
+        int taskNumber = Integer.parseInt(taskNumberText);
+        int taskIndex = taskNumber - 1;
+        if (taskIndex < 0 || taskIndex >= listOfTask.size()) {
+            throw new KothaException("Dont try to delete tasks outside of your range! I am watching you ⊙▃⊙");
+        }
+        listOfTask.get(taskIndex).printRemoveText();
+        listOfTask.remove(taskIndex);
+        printNumOfTasks();
+    }
+
     /** Marks or unmarks a task after checking its one-based task number. */
     private static void changeTaskStatus(String command, boolean isDone) throws KothaException {
         String commandWord = isDone ? "mark" : "unmark";
@@ -136,21 +159,21 @@ public class Kotha {
         } catch (NumberFormatException e) {
             throw new KothaException("Please provide a valid task number to " + commandWord + ".");
         }
-        if (taskIndex < 0 || taskIndex >= listOfTaskPointer) {
+        if (taskIndex < 0 || taskIndex >= listOfTask.size()) {
             throw new KothaException("That task number does not exist.");
         }
 
         if (isDone) {
-            listOfTask[taskIndex].markAsDone();
+            listOfTask.get(taskIndex).markAsDone();
         } else {
-            listOfTask[taskIndex].markAsNotDone();
+            listOfTask.get(taskIndex).markAsNotDone();
         }
     }
 
     /** Displays a consistent error message for invalid commands. */
     private static void printError(String message) {
         System.out.println("____________________________________________________________");
-        System.out.println("Oops! " + message);
+        System.out.println("Master thou has committed a misprision! " + message);
         System.out.println("____________________________________________________________");
     }
 
