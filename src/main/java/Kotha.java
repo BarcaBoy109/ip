@@ -43,10 +43,29 @@ public class Kotha {
                 Task t = listOfTask[taskId];
                 t.markAsNotDone();
             } else {
-                addToList(command);
-                System.out.println("____________________________________________________________");
-                System.out.println("added: " + command);
-                System.out.println("____________________________________________________________");
+                if (command.matches("todo .+")) {
+                    String description = command.substring("todo ".length());
+                    Task t = new ToDo(description);
+                    addToList(t);
+                } else if (command.matches("deadline .+")) {
+                    int byIndex = command.indexOf(" /by ");
+                    String description = command.substring("deadline ".length(), byIndex);
+                    String by = command.substring(byIndex + " /by ".length());
+                    Task t = new Deadline(description, by);
+                    addToList(t);
+                } else if (command.matches("event .+")) {
+                    int fromIndex = command.indexOf(" /from ");
+                    int toIndex = command.indexOf(" /to ");
+                    String description = command.substring("event ".length(), fromIndex);
+                    String from = command.substring(fromIndex + " /from ".length(), toIndex);
+                    String to = command.substring(toIndex + " /to ".length());
+                    Task t = new Event(description, from, to);
+                    addToList(t);
+                } else {
+                    Task t = new Task(command);
+                    addToList(t);
+                }
+
             }
         }
     }
@@ -56,9 +75,16 @@ public class Kotha {
     // Points to the first free slot in listOfTask (one past the last element put inside)
     private static byte listOfTaskPointer = 0;
 
-    private static void addToList(String command) {
-        listOfTask[listOfTaskPointer] = new Task(command);
+    private static void addToList(Task task) {
+        listOfTask[listOfTaskPointer] = task;
+        task.printAddText();
         listOfTaskPointer++;
+        if (listOfTaskPointer == 1) {
+            System.out.println("Hiee you now you have " + listOfTaskPointer + " task in your list.");
+        } else {
+            System.out.println("Hiee you now you have " + listOfTaskPointer + " tasks in your list.");
+        }
+        System.out.println("____________________________________________________________");
     }
     private static void stringList() {
         System.out.println("____________________________________________________________");
@@ -70,7 +96,6 @@ public class Kotha {
         System.out.println("____________________________________________________________");
 
     }
-
 
 
 }
