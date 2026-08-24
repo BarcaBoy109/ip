@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.Scanner;
 
 /**
@@ -33,9 +35,13 @@ public class Kotha {
             } else if (command.equals("list")) {
                 stringList();
             } else if (command.matches("mark (\\d+)")) {
-                changeTaskStatus(command, true);
+                int taskId = Integer.parseInt(command.substring(command.indexOf(" ") + 1)) - 1;
+                Task t = listOfTask[taskId];
+                t.markAsDone();
             } else if (command.matches("unmark (\\d+)")) {
-                changeTaskStatus(command, false);
+                int taskId = Integer.parseInt(command.substring(command.indexOf(" ") + 1)) - 1;
+                Task t = listOfTask[taskId];
+                t.markAsNotDone();
             } else {
                 addToList(command);
                 System.out.println("____________________________________________________________");
@@ -46,14 +52,12 @@ public class Kotha {
     }
 
     // Array containing the list of tasks
-    private static String[] listOfTask = new String[100];
-    // Records whether each task has been marked as done.
-    private static boolean[] isTaskDone = new boolean[100];
+    private static Task[] listOfTask = new Task[100];
     // Points to the first free slot in listOfTask (one past the last element put inside)
     private static byte listOfTaskPointer = 0;
 
     private static void addToList(String command) {
-        listOfTask[listOfTaskPointer] = command;
+        listOfTask[listOfTaskPointer] = new Task(command);
         listOfTaskPointer++;
     }
     private static void stringList() {
@@ -61,40 +65,12 @@ public class Kotha {
         System.out.println("Here are the tasks in your list:");
         for (byte pointer = 0; pointer < listOfTaskPointer; pointer++) {
             byte number = (byte) (pointer + 1);
-            String status = isTaskDone[pointer] ? "[X]" : "[ ]";
-            System.out.printf("%d.%s %s%n", number, status, listOfTask[pointer]);
+            System.out.printf("%d.%s%n", number, listOfTask[pointer].toString());
         }
         System.out.println("____________________________________________________________");
 
     }
 
-    /**
-     * Inspiration taken from Codex
-     * Updates the done status of a task and displays the result.
-     *
-     * @param command the mark or unmark command containing a one-based task number
-     * @param isDone the new done status for the task
-     */
-    private static void changeTaskStatus(String command, boolean isDone) {
-        int taskNumber = Integer.parseInt(command.substring(command.indexOf(' ') + 1));
-        int taskIndex = taskNumber - 1;
-        if (taskIndex < 0 || taskIndex >= listOfTaskPointer) {
-            System.out.println("____________________________________________________________");
-            System.out.println("That task number does not exist.");
-            System.out.println("____________________________________________________________");
-            return;
-        }
 
-        isTaskDone[taskIndex] = isDone;
-        System.out.println("____________________________________________________________");
-        if (isDone) {
-            System.out.println("OK, I've marked this task as done:");
-            System.out.printf("  [X] %s%n", listOfTask[taskIndex]);
-        } else {
-            System.out.println("OK, I've marked this task as not done yet:");
-            System.out.printf("  [ ] %s%n", listOfTask[taskIndex]);
-        }
-        System.out.println("____________________________________________________________");
-    }
 
 }
