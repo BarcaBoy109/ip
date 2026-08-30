@@ -1,6 +1,8 @@
 package main.java;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -55,24 +57,29 @@ public class Storage {
         }
 
         Task task;
-        switch (parts[0]) {
-            case "T":
-                task = new ToDo(parts[2]);
-                break;
-            case "D":
-                if (parts.length != 4) {
+        try {
+            switch (parts[0]) {
+                case "T":
+                    task = new ToDo(parts[2]);
+                    break;
+                case "D":
+                    if (parts.length != 4) {
+                        return null;
+                    }
+                    task = new Deadline(parts[2], LocalDateTime.parse(parts[3]));
+                    break;
+                case "E":
+                    if (parts.length != 5) {
+                        return null;
+                    }
+                    task = new Event(parts[2], LocalDateTime.parse(parts[3]),
+                            LocalDateTime.parse(parts[4]));
+                    break;
+                default:
                     return null;
-                }
-                task = new Deadline(parts[2], parts[3]);
-                break;
-            case "E":
-                if (parts.length != 5) {
-                    return null;
-                }
-                task = new Event(parts[2], parts[3], parts[4]);
-                break;
-            default:
-                return null;
+            }
+        } catch (DateTimeParseException exception) {
+            return null;
         }
         task.setDone("1".equals(parts[1]));
         return task;

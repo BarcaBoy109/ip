@@ -1,12 +1,34 @@
 package main.java;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * A chatbot that echoes commands until the user exits.
  */
 public class Kotha {
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d/M/uuuu");
+    private static final List<DateTimeFormatter> DATE_TIME_FORMATS = List.of(
+            DateTimeFormatter.ofPattern("d/M/uuuu HHmm"),
+            DateTimeFormatter.ofPattern("d/M/uu HHmm"));
+    private static final DateTimeFormatter DAY_MONTH_FORMAT =
+            new java.time.format.DateTimeFormatterBuilder()
+                    .appendPattern("d/M")
+                    .parseDefaulting(java.time.temporal.ChronoField.YEAR, Year.now().getValue())
+                    .toFormatter();
+    private static final DateTimeFormatter TIME_FORMAT =
+            DateTimeFormatter.ofPattern("HHmm");
+    private static ArrayList<Task> listOfTasks = new ArrayList<>();
+    private static final Storage storage = new Storage();
+
     /**
      * Starts the chatbot and processes commands from standard input.
      *
@@ -57,9 +79,6 @@ public class Kotha {
             }
         }
     }
-
-    protected static ArrayList<Task> listOfTasks = new ArrayList<>();
-    protected static final Storage storage = new Storage();
 
     /**
      * Adds the task to the list ot be saved
@@ -122,10 +141,11 @@ public class Kotha {
         }
 
         String description = command.substring("deadline".length(), byIndex).trim();
-        String by = command.substring(byIndex + " /by ".length()).trim();
-        if (description.isEmpty() || by.isEmpty()) {
+        String byText = command.substring(byIndex + " /by ".length()).trim();
+        if (description.isEmpty() || byText.isEmpty()) {
             throw new KothaException("A deadline needs a description and a '/by' date.");
         }
+        LocalDateTime by = parseDateTime(byText);
         addToList(new Deadline(description, by));
     }
 
@@ -141,12 +161,69 @@ public class Kotha {
         }
 
         String description = command.substring("event".length(), fromIndex).trim();
-        String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String to = command.substring(toIndex + " /to ".length()).trim();
-        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+        String fromText = command.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String toText = command.substring(toIndex + " /to ".length()).trim();
+        if (description.isEmpty() || fromText.isEmpty() || toText.isEmpty()) {
             throw new KothaException("An event needs a description, '/from', and '/to' time.");
         }
+        LocalDateTime from = parseDateTime(fromText);
+        LocalDateTime to = parseDateTime(toText);
         addToList(new Event(description, from, to));
+    }
+
+    /**
+     * Converts a supported user date and time into a LocalDateTime.
+     * Dates without a year use the current year.
+     * Dates without a time uses 2359
+     *
+     * @param dateTimeText the date and time supplied in a command as a String object.
+     * @return the corresponding date and time as a LocalDateTime object.
+     * @throws KothaException if the input is not a supported date and time.
+     */
+    private static LocalDateTime parseDateTime(String dateTimeText) throws KothaException {
+        String[] parts = dateTimeText.split("\\s+");
+
+        try {
+            // If HHmm is not mentioned, parse LocalDate + Add default HHmm 2359
+            if (parts.length == 1) {
+                LocalDate date = parseDate(parts[0]);
+                return LocalDateTime.of(date, LocalTime.of(23, 59));
+            }
+
+            if (parts.length == 2) {
+                LocalDate date = parseDate(parts[0]);
+                LocalTime time = LocalTime.parse(parts[1], TIME_FORMAT);
+                return LocalDateTime.of(date, time);
+            }
+        } catch (DateTimeParseException ignored) {
+            // Invalid input
+        }
+
+        throw new KothaException(
+                "Use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm."
+        );
+    }
+
+    /**
+     * Converts a supported user date into a LocalDate
+     *
+     * @param dateText the String to be converted to LocalDate
+     * @return LocalDate object of the dateText
+     */
+    private static LocalDate parseDate(String dateText) {
+        try {
+            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uuuu"));
+        } catch (DateTimeParseException ignored) {
+            // Try next format
+        }
+
+        try {
+            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uu"));
+        } catch (DateTimeParseException ignored) {
+            // Try d/M
+        }
+
+        return LocalDate.parse(dateText, DAY_MONTH_FORMAT);
     }
 
     /**
