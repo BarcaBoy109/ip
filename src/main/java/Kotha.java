@@ -25,6 +25,7 @@ public class Kotha {
         System.out.println("What can I do for you?");
         System.out.println("____________________________________________________________");
 
+        listOfTasks = storage.loadTasks();
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String command = scanner.nextLine().trim();
@@ -57,39 +58,51 @@ public class Kotha {
         }
     }
 
-    // Array containing the list of tasks
-    private static ArrayList<Task> listOfTask = new ArrayList<>();
+    protected static ArrayList<Task> listOfTasks = new ArrayList<>();
+    protected static final Storage storage = new Storage();
 
+    /**
+     * Adds the task to the list ot be saved
+     *
+     * @param task the task to be saved
+     */
     private static void addToList(Task task) {
-        listOfTask.add(task);
+        listOfTasks.add(task);
         task.printAddText();
         printNumOfTasks();
+        storage.saveTasks(listOfTasks);
     }
+
+    /**
+     * Prints the current number of tasks in the list
+     */
     private static void printNumOfTasks() {
-        if (listOfTask.size() == 1) {
-            System.out.println("Hiee you now you have " + listOfTask.size() + " task in your list.");
+        if (listOfTasks.size() == 1) {
+            System.out.println("Hiee you now you have " + listOfTasks.size() + " task in your list.");
         } else {
-            System.out.println("Hiee you now you have " + listOfTask.size() + " tasks in your list.");
+            System.out.println("Hiee you now you have " + listOfTasks.size() + " tasks in your list.");
         }
         System.out.println("____________________________________________________________");
     }
-    private static void removeFromList(int index) {
-        listOfTask.remove(index);
-        printNumOfTasks();
-    }
 
+    /**
+     * Prints each task in the list
+     */
     private static void stringList() {
         System.out.println("____________________________________________________________");
         System.out.println("Here are the tasks in your list:");
-        for (int pointer = 0; pointer < listOfTask.size(); pointer++) {
+        for (int pointer = 0; pointer < listOfTasks.size(); pointer++) {
             int number = pointer + 1;
-            System.out.printf("%d.%s%n", number, listOfTask.get(pointer).toString());
+            System.out.printf("%d.%s%n", number, listOfTasks.get(pointer).toString());
         }
         System.out.println("____________________________________________________________");
 
     }
 
-    /** Adds a todo after checking that it has a description. */
+    /** Adds a todo task to the list of tasks
+     *
+     * @param command the string command sent to the chatbot
+     */
     private static void addTodo(String command) throws KothaException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
@@ -98,7 +111,10 @@ public class Kotha {
         addToList(new ToDo(description));
     }
 
-    /** Adds a deadline after checking its description and by date. */
+    /** Adds a deadline task after checking its description and by date.
+     *
+     * @param command the string command sent to the chatbot
+     */
     private static void addDeadline(String command) throws KothaException {
         int byIndex = command.indexOf(" /by ");
         if (byIndex <= "deadline".length()) {
@@ -113,7 +129,10 @@ public class Kotha {
         addToList(new Deadline(description, by));
     }
 
-    /** Adds an event after checking its description, start time, and end time. */
+    /** Adds an event after checking its description, start time, and end time.
+     *
+     * @param command the string command sent to the chatbot
+     */
     private static void addEvent(String command) throws KothaException {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = command.indexOf(" /to ");
@@ -130,6 +149,12 @@ public class Kotha {
         addToList(new Event(description, from, to));
     }
 
+    /**
+     * Deletes the task at a given 1-based index
+     *
+     * @param command the string command sent to the chatbot
+     * @throws KothaException
+     */
     private static void deleteTask(String command) throws KothaException {
         String taskNumberText = command.substring("delete".length()).trim();
         if (!taskNumberText.matches("\\d+")) {
@@ -137,15 +162,21 @@ public class Kotha {
         }
         int taskNumber = Integer.parseInt(taskNumberText);
         int taskIndex = taskNumber - 1;
-        if (taskIndex < 0 || taskIndex >= listOfTask.size()) {
+        if (taskIndex < 0 || taskIndex >= listOfTasks.size()) {
             throw new KothaException("Dont try to delete tasks outside of your range! I am watching you ⊙▃⊙");
         }
-        listOfTask.get(taskIndex).printRemoveText();
-        listOfTask.remove(taskIndex);
+        listOfTasks.get(taskIndex).printRemoveText();
+        listOfTasks.remove(taskIndex);
         printNumOfTasks();
+        storage.saveTasks(listOfTasks);
     }
 
-    /** Marks or unmarks a task after checking its one-based task number. */
+    /**
+     * Marks or unmarks the task at the given 1-based index
+     *
+     * @param command the string command sent to the chatbot
+     * @param isDone set to true for mark, set to false for unmark
+     */
     private static void changeTaskStatus(String command, boolean isDone) throws KothaException {
         String commandWord = isDone ? "mark" : "unmark";
         String taskNumberText = command.substring(commandWord.length()).trim();
@@ -159,15 +190,16 @@ public class Kotha {
         } catch (NumberFormatException e) {
             throw new KothaException("Please provide a valid task number to " + commandWord + ".");
         }
-        if (taskIndex < 0 || taskIndex >= listOfTask.size()) {
+        if (taskIndex < 0 || taskIndex >= listOfTasks.size()) {
             throw new KothaException("That task number does not exist.");
         }
 
         if (isDone) {
-            listOfTask.get(taskIndex).markAsDone();
+            listOfTasks.get(taskIndex).markAsDone();
         } else {
-            listOfTask.get(taskIndex).markAsNotDone();
+            listOfTasks.get(taskIndex).markAsNotDone();
         }
+        storage.saveTasks(listOfTasks);
     }
 
     /** Displays a consistent error message for invalid commands. */
