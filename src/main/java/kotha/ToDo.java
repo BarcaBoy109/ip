@@ -2,7 +2,7 @@ package kotha;
 
 /** Represents a task without a date or time. */
 public class ToDo extends Task {
-    /** Creates an incomplete to-do task with the supplied description. */
+    /** Creates a to-do task with the supplied description. */
     public ToDo(String description) {
         super(description);
     }
