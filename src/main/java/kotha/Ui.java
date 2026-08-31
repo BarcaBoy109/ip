@@ -34,7 +34,7 @@ public class Ui {
     }
 
     /** Displays all tasks with one-based numbering. */
-    public void showTaskList(List<Task> tasks) {
+    public void showTaskList(List<? extends Task> tasks) {
         System.out.println("____________________________________________________________");
         System.out.println("Here are the tasks in your list:");
         for (int pointer = 0; pointer < tasks.size(); pointer++) {

@@ -2,9 +2,9 @@ package kotha;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class Storage {
      *
      * @param tasks the list of tasks to save in disk
      */
-    public void saveTasks(List<Task> tasks) {
+    public void saveTasks(List<? extends Task> tasks) {
         try {
             Path parent = filePath.getParent();
             if (parent != null) {

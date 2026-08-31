@@ -8,7 +8,6 @@ public class Kotha {
     private static final Storage storage = new Storage("data/kotha.txt");
     private static final Ui ui = new Ui();
     private static final Parser parser = new Parser();
-    private static TaskOperations taskOperations;
 
     /**
      * Starts the chatbot and processes commands from standard input.
@@ -19,7 +18,6 @@ public class Kotha {
         ui.showWelcome();
 
         listOfTasks = new TaskList(storage.loadTasks());
-        taskOperations = new TaskOperations(listOfTasks, storage, ui);
         while (true) {
             String command = ui.readCommand();
             try {
@@ -30,17 +28,17 @@ public class Kotha {
                 } else if (commandType == Parser.CommandType.LIST) {
                     ui.showTaskList(listOfTasks.asList());
                 } else if (commandType == Parser.CommandType.MARK) {
-                    taskOperations.changeStatus(command, true);
+                    changeTaskStatus(command, true);
                 } else if (commandType == Parser.CommandType.UNMARK) {
-                    taskOperations.changeStatus(command, false);
+                    changeTaskStatus(command, false);
                 } else if (commandType == Parser.CommandType.TODO) {
-                    taskOperations.addTodo(command);
+                    addTask(Task.createTodo(command));
                 } else if (commandType == Parser.CommandType.DEADLINE) {
-                    taskOperations.addDeadline(command);
+                    addTask(Task.createDeadline(command));
                 } else if (commandType == Parser.CommandType.EVENT) {
-                    taskOperations.addEvent(command);
+                    addTask(Task.createEvent(command));
                 } else if (commandType == Parser.CommandType.DELETE) {
-                    taskOperations.delete(command);
+                    deleteTask(command);
                 } else {
                     throw new KothaException("Your Majesty, I do not recognise that command.");
                 }
@@ -48,5 +46,56 @@ public class Kotha {
                 ui.showError(e.getMessage());
             }
         }
+    }
+
+    /** Adds a task, reports the change, and saves the updated list. */
+    private static void addTask(Task task) {
+        listOfTasks.add(task);
+        task.printAddText();
+        ui.showTaskCount(listOfTasks.size());
+        storage.saveTasks(listOfTasks.asList());
+    }
+
+    /** Deletes the task identified by a one-based task number. */
+    private static void deleteTask(String command) throws KothaException {
+        String taskNumberText = command.substring("delete".length()).trim();
+        if (!taskNumberText.matches("\\d+")) {
+            throw new KothaException("Your Majesty, I cannot delete task number " + taskNumberText
+                    + ".\nPray provide an integer.");
+        }
+        int taskIndex = Integer.parseInt(taskNumberText) - 1;
+        if (taskIndex < 0 || taskIndex >= listOfTasks.size()) {
+            throw new KothaException("Your Majesty, that task lies beyond the bounds of your list.");
+        }
+        listOfTasks.get(taskIndex).printRemoveText();
+        listOfTasks.remove(taskIndex);
+        ui.showTaskCount(listOfTasks.size());
+        storage.saveTasks(listOfTasks.asList());
+    }
+
+    /** Marks or unmarks the task identified by a one-based task number. */
+    private static void changeTaskStatus(String command, boolean isDone) throws KothaException {
+        String commandWord = isDone ? "mark" : "unmark";
+        String taskNumberText = command.substring(commandWord.length()).trim();
+        if (!taskNumberText.matches("\\d+")) {
+            throw new KothaException(
+                    "Your Majesty, pray provide a valid task number to " + commandWord + ".");
+        }
+        int taskIndex;
+        try {
+            taskIndex = Integer.parseInt(taskNumberText) - 1;
+        } catch (NumberFormatException exception) {
+            throw new KothaException(
+                    "Your Majesty, pray provide a valid task number to " + commandWord + ".");
+        }
+        if (taskIndex < 0 || taskIndex >= listOfTasks.size()) {
+            throw new KothaException("Your Majesty, that task number does not exist.");
+        }
+        if (isDone) {
+            listOfTasks.get(taskIndex).markAsDone();
+        } else {
+            listOfTasks.get(taskIndex).markAsNotDone();
+        }
+        storage.saveTasks(listOfTasks.asList());
     }
 }

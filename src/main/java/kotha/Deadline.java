@@ -8,6 +8,8 @@ public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu hh:mma");
     protected LocalDateTime deadline;
+
+    /** Creates an incomplete task with the supplied description and deadline. */
     public Deadline(String description, LocalDateTime deadline) {
         super(description);
         this.deadline = deadline;
