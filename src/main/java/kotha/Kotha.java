@@ -25,7 +25,7 @@ public class Kotha {
                     .toFormatter();
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HHmm");
-    private static ArrayList<Task> listOfTasks = new ArrayList<>();
+    private static TaskList listOfTasks = new TaskList();
     private static final Storage storage = new Storage("data/kotha.txt");
     private static final Ui ui = new Ui();
     private static final Parser parser = new Parser();
@@ -38,7 +38,7 @@ public class Kotha {
     public static void main(String[] args) {
         ui.showWelcome();
 
-        listOfTasks = storage.loadTasks();
+        listOfTasks = new TaskList(storage.loadTasks());
         while (true) {
             String command = ui.readCommand();
             try {
@@ -47,7 +47,7 @@ public class Kotha {
                     ui.showGoodbye();
                     break;
                 } else if (commandType == Parser.CommandType.LIST) {
-                    ui.showTaskList(listOfTasks);
+                    ui.showTaskList(listOfTasks.asList());
                 } else if (commandType == Parser.CommandType.MARK) {
                     changeTaskStatus(command, true);
                 } else if (commandType == Parser.CommandType.UNMARK) {
@@ -78,7 +78,7 @@ public class Kotha {
         listOfTasks.add(task);
         task.printAddText();
         ui.showTaskCount(listOfTasks.size());
-        storage.saveTasks(listOfTasks);
+        storage.saveTasks(listOfTasks.asList());
     }
 
     /**
@@ -211,7 +211,7 @@ public class Kotha {
         listOfTasks.get(taskIndex).printRemoveText();
         listOfTasks.remove(taskIndex);
         ui.showTaskCount(listOfTasks.size());
-        storage.saveTasks(listOfTasks);
+        storage.saveTasks(listOfTasks.asList());
     }
 
     /**
@@ -242,7 +242,7 @@ public class Kotha {
         } else {
             listOfTasks.get(taskIndex).markAsNotDone();
         }
-        storage.saveTasks(listOfTasks);
+        storage.saveTasks(listOfTasks.asList());
     }
 
     /** Represents an error caused by invalid Kotha command input. */
