@@ -7,7 +7,11 @@ public class Parser {
         BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
     }
 
-    /** Determines the command type from the first word of the input. */
+    /**
+     * Determines the command type from the first word of the input.
+     *
+     * @param input the String input from the user.
+     */
     public CommandType parse(String input) {
         String command = input.trim();
         if (command.equals("bye")) return CommandType.BYE;

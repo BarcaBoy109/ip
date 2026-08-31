@@ -43,7 +43,11 @@ public class Ui {
         System.out.println("____________________________________________________________");
     }
 
-    /** Displays the number of tasks currently stored. */
+    /**
+     * Displays the number of tasks currently stored.
+     *
+     * @param taskCount the number of tasks that the list contains.
+     */
     public void showTaskCount(int taskCount) {
         String suffix = taskCount == 1 ? " task" : " tasks";
         System.out.println("Hiee you now you have " + taskCount + suffix + " in your list.");
