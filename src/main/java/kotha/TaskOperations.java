@@ -31,7 +31,7 @@ public class TaskOperations {
     public void addTodo(String command) throws KothaException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            throw new KothaException("Please add a description after 'todo'.");
+            throw new KothaException("Your Majesty, a description is required after 'todo'.");
         }
         add(new ToDo(description));
     }
@@ -40,12 +40,12 @@ public class TaskOperations {
     public void addDeadline(String command) throws KothaException {
         int byIndex = command.indexOf(" /by ");
         if (byIndex <= "deadline".length()) {
-            throw new KothaException("A deadline needs a description and a '/by' date.");
+            throw new KothaException("Your Majesty, a deadline requires a description and a '/by' date.");
         }
         String description = command.substring("deadline".length(), byIndex).trim();
         String byText = command.substring(byIndex + " /by ".length()).trim();
         if (description.isEmpty() || byText.isEmpty()) {
-            throw new KothaException("A deadline needs a description and a '/by' date.");
+            throw new KothaException("Your Majesty, a deadline requires a description and a '/by' date.");
         }
         add(new Deadline(description, parseDateTime(byText)));
     }
@@ -55,13 +55,13 @@ public class TaskOperations {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = command.indexOf(" /to ");
         if (fromIndex <= "event".length() || toIndex <= fromIndex) {
-            throw new KothaException("An event needs a description, '/from', and '/to' time.");
+            throw new KothaException("Your Majesty, an event requires a description, '/from', and '/to' time.");
         }
         String description = command.substring("event".length(), fromIndex).trim();
         String fromText = command.substring(fromIndex + " /from ".length(), toIndex).trim();
         String toText = command.substring(toIndex + " /to ".length()).trim();
         if (description.isEmpty() || fromText.isEmpty() || toText.isEmpty()) {
-            throw new KothaException("An event needs a description, '/from', and '/to' time.");
+            throw new KothaException("Your Majesty, an event requires a description, '/from', and '/to' time.");
         }
         add(new Event(description, parseDateTime(fromText), parseDateTime(toText)));
     }
@@ -70,7 +70,7 @@ public class TaskOperations {
     public void changeStatus(String command, boolean isDone) throws KothaException {
         String commandWord = isDone ? "mark" : "unmark";
         int taskIndex = parseTaskIndex(command, commandWord,
-                "Please provide a valid task number to " + commandWord + ".");
+                "Your Majesty, pray provide a valid task number to " + commandWord + ".");
         if (isDone) {
             mark(taskIndex);
         } else {
@@ -83,12 +83,12 @@ public class TaskOperations {
     public void delete(String command) throws KothaException {
         String taskNumberText = command.substring("delete".length()).trim();
         if (!taskNumberText.matches("\\d+")) {
-            throw new KothaException("Cannot delete task number " + taskNumberText
-                    + "\nPlease enter an integer");
+            throw new KothaException("Your Majesty, I cannot delete task number " + taskNumberText
+                    + ".\nPray provide an integer.");
         }
         int taskIndex = Integer.parseInt(taskNumberText) - 1;
         ensureTaskExists(taskIndex,
-                "Dont try to delete tasks outside of your range! I am watching you ⊙▃⊙");
+                "Your Majesty, that task lies beyond the bounds of your list.");
         tasks.get(taskIndex).printRemoveText();
         remove(taskIndex);
         ui.showTaskCount(tasks.size());
@@ -126,7 +126,7 @@ public class TaskOperations {
         } catch (NumberFormatException e) {
             throw new KothaException(invalidMessage);
         }
-        ensureTaskExists(taskIndex, "That task number does not exist.");
+        ensureTaskExists(taskIndex, "Your Majesty, that task number does not exist.");
         return taskIndex;
     }
 
@@ -149,7 +149,7 @@ public class TaskOperations {
             // Invalid input
         }
         throw new KothaException(
-                "Use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm.");
+                "Your Majesty, use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm.");
     }
 
     private LocalDate parseDate(String dateText) {

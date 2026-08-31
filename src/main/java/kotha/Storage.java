@@ -33,7 +33,7 @@ public class Storage {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Warning: Master I could not load your saved tasks.");
+            System.out.println("Your Majesty, this humble butler could not load your saved tasks.");
         }
         return tasks;
     }
@@ -54,7 +54,7 @@ public class Storage {
             }
             Files.write(filePath, lines);
         } catch (IOException e) {
-            System.out.println("Warning: Master I could not save your tasks.");
+            System.out.println("Your Majesty, this humble butler could not save your tasks.");
         }
     }
 
@@ -108,6 +108,6 @@ public class Storage {
         if (task instanceof ToDo) {
             return "T" + SEPARATOR + status + SEPARATOR + task.getDescription();
         }
-        throw new IllegalArgumentException("Master you have given me an supported task type.");
+        throw new IllegalArgumentException("Your Majesty, you have bestowed upon me an unsupported task type.");
     }
 }
