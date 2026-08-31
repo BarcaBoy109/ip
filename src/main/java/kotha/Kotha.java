@@ -28,6 +28,7 @@ public class Kotha {
     private static ArrayList<Task> listOfTasks = new ArrayList<>();
     private static final Storage storage = new Storage("data/kotha.txt");
     private static final Ui ui = new Ui();
+    private static final Parser parser = new Parser();
 
     /**
      * Starts the chatbot and processes commands from standard input.
@@ -41,22 +42,23 @@ public class Kotha {
         while (true) {
             String command = ui.readCommand();
             try {
-                if (command.equals("bye")) {
+                Parser.CommandType commandType = parser.parse(command);
+                if (commandType == Parser.CommandType.BYE) {
                     ui.showGoodbye();
                     break;
-                } else if (command.equals("list")) {
+                } else if (commandType == Parser.CommandType.LIST) {
                     ui.showTaskList(listOfTasks);
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                } else if (commandType == Parser.CommandType.MARK) {
                     changeTaskStatus(command, true);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                } else if (commandType == Parser.CommandType.UNMARK) {
                     changeTaskStatus(command, false);
-                } else if (command.equals("todo") || command.startsWith("todo ")) {
+                } else if (commandType == Parser.CommandType.TODO) {
                     addTodo(command);
-                } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+                } else if (commandType == Parser.CommandType.DEADLINE) {
                     addDeadline(command);
-                } else if (command.equals("event") || command.startsWith("event ")) {
+                } else if (commandType == Parser.CommandType.EVENT) {
                     addEvent(command);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                } else if (commandType == Parser.CommandType.DELETE) {
                     deleteTask(command);
                 } else {
                     throw new KothaException("I don't recognise that command.");
