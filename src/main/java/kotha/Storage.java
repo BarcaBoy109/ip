@@ -10,18 +10,23 @@ import java.util.List;
 
 /** Saves tasks to, and restores tasks from, a local text file. */
 public class Storage {
-    private static final Path FILE_PATH = Path.of("data", "kotha.txt");
     private static final String SEPARATOR = " | ";
+    private final Path filePath;
+
+    /** Creates storage backed by the supplied file path. */
+    public Storage(String filePath) {
+        this.filePath = Path.of(filePath);
+    }
 
     /** Loads all the valid tasks stored on disk. */
     public ArrayList<Task> loadTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
-        if (!Files.exists(FILE_PATH)) {
+        if (!Files.exists(filePath)) {
             return tasks;
         }
 
         try {
-            for (String line : Files.readAllLines(FILE_PATH)) {
+            for (String line : Files.readAllLines(filePath)) {
                 Task task = parseTask(line);
                 if (task != null) {
                     tasks.add(task);
@@ -39,12 +44,15 @@ public class Storage {
      */
     public void saveTasks(List<Task> tasks) {
         try {
-            Files.createDirectories(FILE_PATH.getParent());
+            Path parent = filePath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             List<String> lines = new ArrayList<>();
             for (Task task : tasks) {
                 lines.add(formatTask(task));
             }
-            Files.write(FILE_PATH, lines);
+            Files.write(filePath, lines);
         } catch (IOException e) {
             System.out.println("Warning: Master I could not save your tasks.");
         }

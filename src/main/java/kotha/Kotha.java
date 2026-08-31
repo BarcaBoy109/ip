@@ -26,7 +26,7 @@ public class Kotha {
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HHmm");
     private static ArrayList<Task> listOfTasks = new ArrayList<>();
-    private static final Storage storage = new Storage();
+    private static final Storage storage = new Storage("data/kotha.txt");
     private static final Ui ui = new Ui();
 
     /**
