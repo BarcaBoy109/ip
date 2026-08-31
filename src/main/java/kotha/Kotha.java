@@ -14,10 +14,6 @@ import java.time.format.DateTimeParseException;
  * A chatbot that echoes commands until the user exits.
  */
 public class Kotha {
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d/M/uuuu");
-    private static final List<DateTimeFormatter> DATE_TIME_FORMATS = List.of(
-            DateTimeFormatter.ofPattern("d/M/uuuu HHmm"),
-            DateTimeFormatter.ofPattern("d/M/uu HHmm"));
     private static final DateTimeFormatter DAY_MONTH_FORMAT =
             new java.time.format.DateTimeFormatterBuilder()
                     .appendPattern("d/M")
@@ -29,6 +25,7 @@ public class Kotha {
     private static final Storage storage = new Storage("data/kotha.txt");
     private static final Ui ui = new Ui();
     private static final Parser parser = new Parser();
+    private static TaskOperations taskOperations;
 
     /**
      * Starts the chatbot and processes commands from standard input.
@@ -39,6 +36,7 @@ public class Kotha {
         ui.showWelcome();
 
         listOfTasks = new TaskList(storage.loadTasks());
+        taskOperations = new TaskOperations(listOfTasks);
         while (true) {
             String command = ui.readCommand();
             try {
@@ -75,7 +73,7 @@ public class Kotha {
      * @param task the task to be saved
      */
     private static void addToList(Task task) {
-        listOfTasks.add(task);
+        taskOperations.add(task);
         task.printAddText();
         ui.showTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks.asList());
@@ -209,7 +207,7 @@ public class Kotha {
             throw new KothaException("Dont try to delete tasks outside of your range! I am watching you ⊙▃⊙");
         }
         listOfTasks.get(taskIndex).printRemoveText();
-        listOfTasks.remove(taskIndex);
+        taskOperations.remove(taskIndex);
         ui.showTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks.asList());
     }
@@ -238,9 +236,9 @@ public class Kotha {
         }
 
         if (isDone) {
-            listOfTasks.get(taskIndex).markAsDone();
+            taskOperations.mark(taskIndex);
         } else {
-            listOfTasks.get(taskIndex).markAsNotDone();
+            taskOperations.unmark(taskIndex);
         }
         storage.saveTasks(listOfTasks.asList());
     }
