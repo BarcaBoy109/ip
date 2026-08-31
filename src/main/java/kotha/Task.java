@@ -1,4 +1,4 @@
-package main.java;
+package main.java.kotha;
 
 /** Represents a task that can be completed or left incomplete. */
 public class Task {
