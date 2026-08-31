@@ -1,11 +1,15 @@
 package kotha;
 
+import kotha.tasks.Task;
+import kotha.tasks.TaskList;
+
 /**
  * A chatbot that echoes commands until the user exits.
  */
 public class Kotha {
-    private static TaskList listOfTasks = new TaskList();
     private static final Storage storage = new Storage("data/kotha.txt");
+    private static final TaskList listOfTasks = new TaskList(storage.loadTasks());
+
     private static final Ui ui = new Ui();
     private static final Parser parser = new Parser();
 
@@ -17,7 +21,6 @@ public class Kotha {
     public static void main(String[] args) {
         ui.showWelcome();
 
-        listOfTasks = new TaskList(storage.loadTasks());
         while (true) {
             String command = ui.readCommand();
             try {

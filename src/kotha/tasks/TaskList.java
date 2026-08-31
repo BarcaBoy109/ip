@@ -1,20 +1,14 @@
-package kotha;
+package kotha.tasks;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /** Owns the tasks currently managed by Kotha. */
 public class TaskList {
     private final List<Task> tasks;
 
-    /** Creates an empty task list. */
-    public TaskList() {
-        this.tasks = new ArrayList<>();
-    }
-
     /** Creates a task list containing the supplied tasks. */
-    public TaskList(Collection<? extends Task> tasks) {
+    public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
     }
 

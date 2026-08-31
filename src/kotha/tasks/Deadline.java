@@ -1,10 +1,10 @@
-package kotha;
+package kotha.tasks;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /** Represents a task with a deadline. */
-public class Deadline extends Task {
+public class Deadline extends kotha.tasks.Task {
     private static final DateTimeFormatter DISPLAY_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu hh:mma");
     protected LocalDateTime deadline;

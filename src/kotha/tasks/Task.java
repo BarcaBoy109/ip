@@ -1,4 +1,6 @@
-package kotha;
+package kotha.tasks;
+
+import kotha.KothaException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -129,7 +131,7 @@ public class Task {
     }
 
     /** Restores the completion status without printing a user message. */
-    void setDone(boolean isDone) {
+    public void setDone(boolean isDone) {
         this.isDone = isDone;
     }
 

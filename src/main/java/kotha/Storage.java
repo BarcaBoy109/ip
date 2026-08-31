@@ -1,5 +1,10 @@
 package kotha;
 
+import kotha.tasks.Deadline;
+import kotha.tasks.Event;
+import kotha.tasks.Task;
+import kotha.tasks.ToDo;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.nio.file.Files;

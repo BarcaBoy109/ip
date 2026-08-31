@@ -1,4 +1,4 @@
-package kotha;
+package kotha.tasks;
 
 /** Represents a task without a date or time. */
 public class ToDo extends Task {
