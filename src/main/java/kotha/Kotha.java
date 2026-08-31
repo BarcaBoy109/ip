@@ -42,12 +42,11 @@ public class Kotha {
                 } else if (commandType == Parser.CommandType.DELETE) {
                     taskOperations.delete(command);
                 } else {
-                    throw new TaskOperations.TaskOperationException("I don't recognise that command.");
+                    throw new KothaException("I don't recognise that command.");
                 }
-            } catch (TaskOperations.TaskOperationException e) {
+            } catch (KothaException e) {
                 ui.showError(e.getMessage());
             }
         }
     }
-
 }

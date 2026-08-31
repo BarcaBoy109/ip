@@ -28,46 +28,46 @@ public class TaskOperations {
     }
 
     /** Adds a todo task from a user command. */
-    public void addTodo(String command) throws TaskOperationException {
+    public void addTodo(String command) throws KothaException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            throw new TaskOperationException("Please add a description after 'todo'.");
+            throw new KothaException("Please add a description after 'todo'.");
         }
         add(new ToDo(description));
     }
 
     /** Adds a deadline task from a user command. */
-    public void addDeadline(String command) throws TaskOperationException {
+    public void addDeadline(String command) throws KothaException {
         int byIndex = command.indexOf(" /by ");
         if (byIndex <= "deadline".length()) {
-            throw new TaskOperationException("A deadline needs a description and a '/by' date.");
+            throw new KothaException("A deadline needs a description and a '/by' date.");
         }
         String description = command.substring("deadline".length(), byIndex).trim();
         String byText = command.substring(byIndex + " /by ".length()).trim();
         if (description.isEmpty() || byText.isEmpty()) {
-            throw new TaskOperationException("A deadline needs a description and a '/by' date.");
+            throw new KothaException("A deadline needs a description and a '/by' date.");
         }
         add(new Deadline(description, parseDateTime(byText)));
     }
 
     /** Adds an event task from a user command. */
-    public void addEvent(String command) throws TaskOperationException {
+    public void addEvent(String command) throws KothaException {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = command.indexOf(" /to ");
         if (fromIndex <= "event".length() || toIndex <= fromIndex) {
-            throw new TaskOperationException("An event needs a description, '/from', and '/to' time.");
+            throw new KothaException("An event needs a description, '/from', and '/to' time.");
         }
         String description = command.substring("event".length(), fromIndex).trim();
         String fromText = command.substring(fromIndex + " /from ".length(), toIndex).trim();
         String toText = command.substring(toIndex + " /to ".length()).trim();
         if (description.isEmpty() || fromText.isEmpty() || toText.isEmpty()) {
-            throw new TaskOperationException("An event needs a description, '/from', and '/to' time.");
+            throw new KothaException("An event needs a description, '/from', and '/to' time.");
         }
         add(new Event(description, parseDateTime(fromText), parseDateTime(toText)));
     }
 
     /** Marks or unmarks a task using its one-based number. */
-    public void changeStatus(String command, boolean isDone) throws TaskOperationException {
+    public void changeStatus(String command, boolean isDone) throws KothaException {
         String commandWord = isDone ? "mark" : "unmark";
         int taskIndex = parseTaskIndex(command, commandWord,
                 "Please provide a valid task number to " + commandWord + ".");
@@ -80,10 +80,10 @@ public class TaskOperations {
     }
 
     /** Deletes a task using its one-based number. */
-    public void delete(String command) throws TaskOperationException {
+    public void delete(String command) throws KothaException {
         String taskNumberText = command.substring("delete".length()).trim();
         if (!taskNumberText.matches("\\d+")) {
-            throw new TaskOperationException("Cannot delete task number " + taskNumberText
+            throw new KothaException("Cannot delete task number " + taskNumberText
                     + "\nPlease enter an integer");
         }
         int taskIndex = Integer.parseInt(taskNumberText) - 1;
@@ -115,28 +115,28 @@ public class TaskOperations {
     }
 
     private int parseTaskIndex(String command, String commandWord, String invalidMessage)
-            throws TaskOperationException {
+            throws KothaException {
         String taskNumberText = command.substring(commandWord.length()).trim();
         if (!taskNumberText.matches("\\d+")) {
-            throw new TaskOperationException(invalidMessage);
+            throw new KothaException(invalidMessage);
         }
         int taskIndex;
         try {
             taskIndex = Integer.parseInt(taskNumberText) - 1;
         } catch (NumberFormatException e) {
-            throw new TaskOperationException(invalidMessage);
+            throw new KothaException(invalidMessage);
         }
         ensureTaskExists(taskIndex, "That task number does not exist.");
         return taskIndex;
     }
 
-    private void ensureTaskExists(int index, String message) throws TaskOperationException {
+    private void ensureTaskExists(int index, String message) throws KothaException {
         if (index < 0 || index >= tasks.size()) {
-            throw new TaskOperationException(message);
+            throw new KothaException(message);
         }
     }
 
-    private LocalDateTime parseDateTime(String dateTimeText) throws TaskOperationException {
+    private LocalDateTime parseDateTime(String dateTimeText) throws KothaException {
         String[] parts = dateTimeText.split("\\s+");
         try {
             if (parts.length == 1) {
@@ -148,7 +148,7 @@ public class TaskOperations {
         } catch (DateTimeParseException ignored) {
             // Invalid input
         }
-        throw new TaskOperationException(
+        throw new KothaException(
                 "Use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm.");
     }
 
@@ -170,10 +170,4 @@ public class TaskOperations {
         storage.saveTasks(tasks.asList());
     }
 
-    /** Represents an invalid task operation command. */
-    public static class TaskOperationException extends Exception {
-        public TaskOperationException(String message) {
-            super(message);
-        }
-    }
 }
