@@ -1,4 +1,4 @@
-package main.java.kotha;
+package kotha;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -28,6 +27,7 @@ public class Kotha {
             DateTimeFormatter.ofPattern("HHmm");
     private static ArrayList<Task> listOfTasks = new ArrayList<>();
     private static final Storage storage = new Storage();
+    private static final Ui ui = new Ui();
 
     /**
      * Starts the chatbot and processes commands from standard input.
@@ -35,30 +35,17 @@ public class Kotha {
      * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
-        // The banner was made using Codex
-        String banner = " _  __   ___  _____ _   _    _    \n"
-                + "| |/ /  / _ \\|_   _| | | |  / \\   \n"
-                + "| ' /  | | | | | | | |_| | / _ \\  \n"
-                + "| . \\  | |_| | | | |  _  |/ ___ \\ \n"
-                + "|_|\\_\\  \\___/  |_| |_| |_/_/   \\_\\\n";
-        System.out.println(banner);
-        System.out.println("____________________________________________________________");
-        System.out.println("Hello! I'm KOTHA.");
-        System.out.println("What can I do for you?");
-        System.out.println("____________________________________________________________");
+        ui.showWelcome();
 
         listOfTasks = storage.loadTasks();
-        Scanner scanner = new Scanner(System.in);
         while (true) {
-            String command = scanner.nextLine().trim();
+            String command = ui.readCommand();
             try {
                 if (command.equals("bye")) {
-                    System.out.println("____________________________________________________________");
-                    System.out.println("Bye. Hope to see you again soon!");
-                    System.out.println("____________________________________________________________");
+                    ui.showGoodbye();
                     break;
                 } else if (command.equals("list")) {
-                    stringList();
+                    ui.showTaskList(listOfTasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     changeTaskStatus(command, true);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
@@ -75,7 +62,7 @@ public class Kotha {
                     throw new KothaException("I don't recognise that command.");
                 }
             } catch (KothaException e) {
-                printError(e.getMessage());
+                ui.showError(e.getMessage());
             }
         }
     }
@@ -88,36 +75,13 @@ public class Kotha {
     private static void addToList(Task task) {
         listOfTasks.add(task);
         task.printAddText();
-        printNumOfTasks();
+        ui.showTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks);
     }
 
     /**
      * Prints the current number of tasks in the list
      */
-    private static void printNumOfTasks() {
-        if (listOfTasks.size() == 1) {
-            System.out.println("Hiee you now you have " + listOfTasks.size() + " task in your list.");
-        } else {
-            System.out.println("Hiee you now you have " + listOfTasks.size() + " tasks in your list.");
-        }
-        System.out.println("____________________________________________________________");
-    }
-
-    /**
-     * Prints each task in the list
-     */
-    private static void stringList() {
-        System.out.println("____________________________________________________________");
-        System.out.println("Here are the tasks in your list:");
-        for (int pointer = 0; pointer < listOfTasks.size(); pointer++) {
-            int number = pointer + 1;
-            System.out.printf("%d.%s%n", number, listOfTasks.get(pointer).toString());
-        }
-        System.out.println("____________________________________________________________");
-
-    }
-
     /** Adds a todo task to the list of tasks
      *
      * @param command the string command sent to the chatbot
@@ -244,7 +208,7 @@ public class Kotha {
         }
         listOfTasks.get(taskIndex).printRemoveText();
         listOfTasks.remove(taskIndex);
-        printNumOfTasks();
+        ui.showTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks);
     }
 
@@ -277,13 +241,6 @@ public class Kotha {
             listOfTasks.get(taskIndex).markAsNotDone();
         }
         storage.saveTasks(listOfTasks);
-    }
-
-    /** Displays a consistent error message for invalid commands. */
-    private static void printError(String message) {
-        System.out.println("____________________________________________________________");
-        System.out.println("Master thou has committed a misprision! " + message);
-        System.out.println("____________________________________________________________");
     }
 
     /** Represents an error caused by invalid Kotha command input. */

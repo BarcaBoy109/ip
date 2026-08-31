@@ -1,4 +1,4 @@
-package main.java.kotha;
+package kotha;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

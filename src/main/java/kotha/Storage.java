@@ -1,4 +1,4 @@
-package main.java.kotha;
+package kotha;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

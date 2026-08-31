@@ -1,4 +1,4 @@
-package main.java.kotha;
+package kotha;
 
 /** Represents a task that can be completed or left incomplete. */
 public class Task {
@@ -15,12 +15,14 @@ public class Task {
         return isDone ? "[X]" : "[ ]";
     }
 
+    /** Marks the task as <b>done</b> and prints the updated status of that task. */
     public void markAsDone() {
         isDone = true;
         System.out.println("I have marked the following task as done:");
         System.out.println(this.toString());
     }
 
+    /** Marks the task as <b>not done</b> and prints the updated status of that task. */
     public void markAsNotDone() {
         isDone = false;
         System.out.println("I have marked the following task as not done:");
