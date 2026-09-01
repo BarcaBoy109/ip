@@ -40,7 +40,7 @@ test {
 }
 
 application {
-    mainClass = 'seedu.duke.Duke'
+    mainClass = 'kotha.Kotha'
 }
 
 jar {
@@ -51,7 +51,7 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'kotha.jar'
 }
 
 run {

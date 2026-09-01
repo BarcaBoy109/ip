@@ -1,9 +1,9 @@
 package kotha;
 
-import kotha.tasks.Task;
-
 import java.util.List;
 import java.util.Scanner;
+
+import kotha.tasks.Task;
 
 /** Handles user input and output for Kotha. */
 public class Ui {
