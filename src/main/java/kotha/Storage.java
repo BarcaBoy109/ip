@@ -1,34 +1,44 @@
-package main.java.kotha;
+package kotha;
+
+import kotha.tasks.Deadline;
+import kotha.tasks.Event;
+import kotha.tasks.Task;
+import kotha.tasks.ToDo;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Saves tasks to, and restores tasks from, a local text file. */
 public class Storage {
-    private static final Path FILE_PATH = Path.of("data", "kotha.txt");
     private static final String SEPARATOR = " | ";
+    private final Path filePath;
+
+    /** Creates storage backed by the supplied file path. */
+    public Storage(String filePath) {
+        this.filePath = Path.of(filePath);
+    }
 
     /** Loads all the valid tasks stored on disk. */
     public ArrayList<Task> loadTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
-        if (!Files.exists(FILE_PATH)) {
+        if (!Files.exists(filePath)) {
             return tasks;
         }
 
         try {
-            for (String line : Files.readAllLines(FILE_PATH)) {
+            for (String line : Files.readAllLines(filePath)) {
                 Task task = parseTask(line);
                 if (task != null) {
                     tasks.add(task);
                 }
             }
         } catch (IOException e) {
-            System.out.println("Warning: Master I could not load your saved tasks.");
+            System.out.println("Your Majesty, this humble butler could not load your saved tasks.");
         }
         return tasks;
     }
@@ -37,16 +47,19 @@ public class Storage {
      *
      * @param tasks the list of tasks to save in disk
      */
-    public void saveTasks(List<Task> tasks) {
+    public void saveTasks(List<? extends Task> tasks) {
         try {
-            Files.createDirectories(FILE_PATH.getParent());
+            Path parent = filePath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             List<String> lines = new ArrayList<>();
             for (Task task : tasks) {
                 lines.add(formatTask(task));
             }
-            Files.write(FILE_PATH, lines);
+            Files.write(filePath, lines);
         } catch (IOException e) {
-            System.out.println("Warning: Master I could not save your tasks.");
+            System.out.println("Your Majesty, this humble butler could not save your tasks.");
         }
     }
 
@@ -100,6 +113,6 @@ public class Storage {
         if (task instanceof ToDo) {
             return "T" + SEPARATOR + status + SEPARATOR + task.getDescription();
         }
-        throw new IllegalArgumentException("Master you have given me an supported task type.");
+        throw new IllegalArgumentException("Your Majesty, you have bestowed upon me an unsupported task type.");
     }
 }
