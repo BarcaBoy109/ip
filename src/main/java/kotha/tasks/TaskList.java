@@ -12,6 +12,10 @@ public class TaskList {
         this.tasks = new ArrayList<>(tasks);
     }
 
+    /** Creates an empty task list*/
+    public TaskList() {
+        this.tasks = new ArrayList<>();
+    }
     /** Adds a task to the list. */
     public void add(Task task) {
         tasks.add(task);

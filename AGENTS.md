@@ -24,6 +24,12 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Test coverage
+
+JUnit tests should cover approximately the top 50% of the project's highest-value methods,
+prioritizing complex, core, and critical business logic. Update or add the relevant JUnit tests
+after every code change so that the project continues to comply with this coverage target.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
