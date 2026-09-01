@@ -43,7 +43,8 @@ public class Storage {
         return tasks;
     }
 
-    /** Saves the complete task list, replacing the previous saved version.
+    /**
+     * Saves the complete task list, replacing the previous saved version.
      *
      * @param tasks the list of tasks to save in disk
      */
