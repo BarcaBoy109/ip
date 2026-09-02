@@ -45,6 +45,16 @@ public class Ui {
         System.out.println("____________________________________________________________");
     }
 
+    /** Displays tasks matching a search keyword with one-based numbering. */
+    public void showSearchResults(List<Task> tasks) {
+        System.out.println("____________________________________________________________");
+        System.out.println("Here are the matching tasks in your list:");
+        for (int pointer = 0; pointer < tasks.size(); pointer++) {
+            System.out.printf("%d.%s%n", pointer + 1, tasks.get(pointer));
+        }
+        System.out.println("____________________________________________________________");
+    }
+
     /**
      * Displays the number of tasks currently stored.
      *

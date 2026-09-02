@@ -30,6 +30,8 @@ public class Kotha {
                     break;
                 } else if (commandType == Parser.CommandType.LIST) {
                     ui.showTaskList(listOfTasks.asList());
+                } else if (commandType == Parser.CommandType.FIND) {
+                    findTasks(command);
                 } else if (commandType == Parser.CommandType.MARK) {
                     changeTaskStatus(command, true);
                 } else if (commandType == Parser.CommandType.UNMARK) {
@@ -49,6 +51,15 @@ public class Kotha {
                 ui.showError(e.getMessage());
             }
         }
+    }
+
+    /** Searches task descriptions for the keyword supplied after {@code find}. */
+    private static void findTasks(String command) throws KothaException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new KothaException("Your Majesty, provide a keyword to find.");
+        }
+        ui.showSearchResults(listOfTasks.find(keyword));
     }
 
     /** Adds a task, reports the change, and saves the updated list. */
