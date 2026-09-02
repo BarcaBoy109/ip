@@ -1,14 +1,15 @@
 package kotha.tasks;
 
-import kotha.KothaException;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class DeadlineTest {
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Test;
+
+import kotha.KothaException;
+
+class DeadlineTest {
 
     @Test
     void createDeadline_createsTaskWithCorrectDescriptionAndFrom() throws KothaException {
@@ -17,6 +18,6 @@ public class DeadlineTest {
         assertEquals("clean up my table", testTask.getDescription());
         assertEquals("[ ]", testTask.getStatusIcon());
         assertFalse(testTask.isDone());
-        assertEquals(LocalDateTime.of(2026, 5, 16, 23, 59),  testTask.getDeadline());
+        assertEquals(LocalDateTime.of(2026, 5, 16, 23, 59), testTask.getDeadline());
     }
 }

@@ -24,4 +24,6 @@ _temp/
 text-ui-test/EXPECTED-UNIX.TXT
 
 # Codex files
-/.codex
+/.codex/*
+!/.codex/skills/
+!/.codex/skills/**

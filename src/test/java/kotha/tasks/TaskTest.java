@@ -2,17 +2,13 @@ package kotha.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import kotha.KothaException;
 import org.junit.jupiter.api.Test;
 
-import kotha.tasks.Task;
+import kotha.KothaException;
 
-import java.time.LocalDateTime;
-
-class TaskTest{
+class TaskTest {
 
     @Test
     void createTodo_createsTaskWithCorrectDescription() throws KothaException {

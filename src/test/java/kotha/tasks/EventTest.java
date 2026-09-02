@@ -1,14 +1,15 @@
 package kotha.tasks;
 
-import kotha.KothaException;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class EventTest {
+import java.time.LocalDateTime;
+
+import org.junit.jupiter.api.Test;
+
+import kotha.KothaException;
+
+class EventTest {
 
     @Test
     void createEvent_createsTaskWithCorrectDescriptionFromAndTo() throws KothaException {
