@@ -30,6 +30,12 @@ All Java production and test code in this project must follow the project skill
 `.codex/skills/seedu-java-coding-standard/SKILL.md`, based on the SE-EDU Java basic and intermediate
 standard. Apply it to every code change and run Checkstyle when the Gradle environment permits.
 
+## Git commit standard
+
+All future commit messages must follow `.codex/skills/seedu-git-standard/SKILL.md`, based on the
+SE-EDU Git conventions. Keep unrelated changes in separate commits and review the staged diff
+before committing.
+
 ## Test coverage
 
 JUnit tests should cover approximately the top 50% of the project's highest-value methods,
