@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class TaskListTest {
 
     @Test
@@ -22,5 +24,15 @@ class TaskListTest {
         taskList.add(task);
 
         assertEquals(task, taskList.get(0));
+    }
+
+    @Test
+    void find_returnsTasksContainingKeywordIgnoringCase() {
+        TaskList taskList = new TaskList();
+        Task matchingTask = new ToDo("Read a book");
+        taskList.add(matchingTask);
+        taskList.add(new ToDo("Attend meeting"));
+
+        assertEquals(List.of(matchingTask), taskList.find("BOOK"));
     }
 }

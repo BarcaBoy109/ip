@@ -4,7 +4,7 @@ package kotha;
 public class Parser {
     /** The command types understood by Kotha. */
     public enum CommandType {
-        BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
+        BYE, LIST, FIND, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
     }
 
     /**
@@ -19,6 +19,9 @@ public class Parser {
         }
         if (command.equals("list")) {
             return CommandType.LIST;
+        }
+        if (hasCommandWord(command, "find")) {
+            return CommandType.FIND;
         }
         if (hasCommandWord(command, "mark")) {
             return CommandType.MARK;

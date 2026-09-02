@@ -13,6 +13,7 @@ class ParserTest {
     void parseExactCommands_returnsCorrectCommandType() {
         assertEquals(CommandType.BYE, parser.parse("bye"));
         assertEquals(CommandType.LIST, parser.parse("list"));
+        assertEquals(CommandType.FIND, parser.parse("find book"));
     }
 
     @Test
