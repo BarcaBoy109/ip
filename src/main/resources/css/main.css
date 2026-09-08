@@ -1,0 +1,7 @@
+.root { -fx-background-color: #f4f1ea; }
+.scroll-pane, .scroll-pane .viewport { -fx-background-color: transparent; }
+.text-field { -fx-font-size: 15px; -fx-padding: 10px; }
+.button { -fx-background-color: #6b4f3a; -fx-text-fill: white; -fx-font-weight: bold; }
+.bot-bubble, .user-bubble { -fx-padding: 10px 14px; -fx-background-radius: 14px; -fx-font-size: 14px; }
+.bot-bubble { -fx-background-color: white; }
+.user-bubble { -fx-background-color: #d8ead3; }
