@@ -1,7 +1,22 @@
-.root { -fx-background-color: #f4f1ea; }
+.root { -fx-background-color: linear-gradient(to bottom right, purple, orange); }
 .scroll-pane, .scroll-pane .viewport { -fx-background-color: transparent; }
 .text-field { -fx-font-size: 15px; -fx-padding: 10px; }
 .button { -fx-background-color: #6b4f3a; -fx-text-fill: white; -fx-font-weight: bold; }
 .bot-bubble, .user-bubble { -fx-padding: 10px 14px; -fx-background-radius: 14px; -fx-font-size: 14px; }
-.bot-bubble { -fx-background-color: white; }
-.user-bubble { -fx-background-color: #d8ead3; }
+.bot-bubble {
+    background: white;
+    -fx-background-color: background;
+    -fx-text-fill: ladder(background, white 49%, black 50%);
+    -fx-background-radius: 14px 14px 14px 0;
+}
+.bot-bubble.exception-bubble { background: #f4a6a6; }
+.bot-bubble.todo-bubble { background: #add8e6; }
+.bot-bubble.deadline-bubble { background: #fff176; }
+.bot-bubble.event-bubble { background: #ffb366; }
+.bot-bubble.list-bubble { background: white; }
+.user-bubble {
+    background: #6b4f3a;
+    -fx-background-color: background;
+    -fx-text-fill: ladder(background, white 49%, black 50%);
+    -fx-background-radius: 14px 14px 0 14px;
+}

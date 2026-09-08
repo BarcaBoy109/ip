@@ -10,6 +10,7 @@ public class KothaEngine {
     private final Storage storage;
     private final TaskList tasks;
     private final Parser parser = new Parser();
+    private String lastResponseStyle = "list";
 
     /** Creates an engine backed by the normal Kotha data file. */
     public KothaEngine() {
@@ -21,6 +22,8 @@ public class KothaEngine {
     public String processCommand(String command) {
         try {
             Parser.CommandType type = parser.parse(command);
+            lastResponseStyle = type == Parser.CommandType.UNKNOWN
+                    ? "exception" : type.name().toLowerCase();
             switch (type) {
             case LIST:
                 return formatTasks(tasks.asList(), "Here are the tasks in your list:");
@@ -59,8 +62,14 @@ public class KothaEngine {
                 return "I do not recognise whatever you have written up there";
             }
         } catch (KothaException exception) {
+            lastResponseStyle = "exception";
             return exception.getMessage();
         }
+    }
+
+    /** Returns the style category for the most recently processed response. */
+    public String getLastResponseStyle() {
+        return lastResponseStyle;
     }
 
     private String formatTasks(List<Task> selected, String heading) {
