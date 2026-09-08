@@ -35,7 +35,9 @@ public class MainWindow extends AnchorPane {
         if (input.isEmpty()) {
             return;
         }
-        dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage), DialogBox.getBotDialog(chat.processCommand(input), botImage));
+        String response = chat.processCommand(input);
+        dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage),
+                DialogBox.getBotDialog(response, botImage, chat.getLastResponseStyle()));
         userInput.clear();
     }
 
@@ -43,7 +45,8 @@ public class MainWindow extends AnchorPane {
     @FXML private void chooseProfilePicture() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose profile picture");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
+        chooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
         var file = chooser.showOpenDialog(profileButton.getScene().getWindow());
         if (file != null) userImage = new Image(file.toURI().toString());
     }

@@ -33,6 +33,13 @@ public final class DialogBox extends HBox {
 
     /** Creates a bot speech bubble with an icon. */
     public static DialogBox getBotDialog(String text, Image image) {
-        return new DialogBox(text, true, image);
+        return getBotDialog(text, image, "list");
+    }
+
+    /** Creates a bot bubble with a response-specific colour category. */
+    public static DialogBox getBotDialog(String text, Image image, String style) {
+        DialogBox box = new DialogBox(text, true, image);
+        ((Label) box.getChildren().get(1)).getStyleClass().add(style + "-bubble");
+        return box;
     }
 }
