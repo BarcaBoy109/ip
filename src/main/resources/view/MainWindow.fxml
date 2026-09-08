@@ -4,6 +4,7 @@
 <AnchorPane prefHeight="600.0" prefWidth="500.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kotha.ui.MainWindow">
     <HBox spacing="0.0" prefHeight="42.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <TextField fx:id="userInput" onAction="#handleUserInput" promptText="Type a command..." HBox.hgrow="ALWAYS" />
+        <Button fx:id="profileButton" text="Photo" onAction="#chooseProfilePicture" prefHeight="42.0" />
         <Button text="Send" onAction="#handleUserInput" prefHeight="42.0" />
     </HBox>
     <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"><content><VBox fx:id="dialogContainer" spacing="8.0" /></content></ScrollPane>
