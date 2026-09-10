@@ -39,7 +39,8 @@ public final class DialogBox extends HBox {
     /** Creates a bot bubble with a response-specific colour category. */
     public static DialogBox getBotDialog(String text, Image image, String style) {
         DialogBox box = new DialogBox(text, true, image);
-        ((Label) box.getChildren().get(1)).getStyleClass().add(style + "-bubble");
+        Label label = (Label) box.getChildren().get(1);
+        label.getStyleClass().add(style + "-bubble");
         return box;
     }
 }

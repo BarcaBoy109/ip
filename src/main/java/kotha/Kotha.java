@@ -19,17 +19,17 @@ public class Kotha {
      * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
-        ui.showWelcome();
+        ui.printWelcomeMessage();
 
         while (true) {
             String command = ui.readCommand();
             try {
                 Parser.CommandType commandType = parser.parse(command);
                 if (commandType == Parser.CommandType.BYE) {
-                    ui.showGoodbye();
+                    ui.printGoodbye();
                     break;
                 } else if (commandType == Parser.CommandType.LIST) {
-                    ui.showTaskList(listOfTasks.asList());
+                    ui.printTaskList(listOfTasks.asList());
                 } else if (commandType == Parser.CommandType.FIND) {
                     findTasks(command);
                 } else if (commandType == Parser.CommandType.MARK) {
@@ -48,7 +48,7 @@ public class Kotha {
                     throw new KothaException("Your Majesty, I do not recognise that command.");
                 }
             } catch (KothaException e) {
-                ui.showError(e.getMessage());
+                ui.printErrorMessage(e.getMessage());
             }
         }
     }
@@ -59,14 +59,14 @@ public class Kotha {
         if (keyword.isEmpty()) {
             throw new KothaException("Your Majesty, provide a keyword to find.");
         }
-        ui.showSearchResults(listOfTasks.find(keyword));
+        ui.printSearchResults(listOfTasks.find(keyword));
     }
 
     /** Adds a task, reports the change, and saves the updated list. */
     private static void addTask(Task task) {
         listOfTasks.add(task);
         task.printAddText();
-        ui.showTaskCount(listOfTasks.size());
+        ui.printTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks.asList());
     }
 
@@ -83,7 +83,7 @@ public class Kotha {
         }
         listOfTasks.get(taskIndex).printRemoveText();
         listOfTasks.remove(taskIndex);
-        ui.showTaskCount(listOfTasks.size());
+        ui.printTaskCount(listOfTasks.size());
         storage.saveTasks(listOfTasks.asList());
     }
 

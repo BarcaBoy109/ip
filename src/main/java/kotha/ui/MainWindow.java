@@ -1,14 +1,14 @@
 package kotha.ui;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import kotha.KothaEngine;
 
@@ -48,13 +48,17 @@ public class MainWindow extends AnchorPane {
         chooser.getExtensionFilters()
                 .add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
         var file = chooser.showOpenDialog(profileButton.getScene().getWindow());
-        if (file != null) userImage = new Image(file.toURI().toString());
+        if (file != null) {
+            userImage = new Image(file.toURI().toString());
+        }
     }
 
     private static Image createDefaultImage(Color color) {
         WritableImage image = new WritableImage(36, 36);
         for (int x = 0; x < 36; x++) {
-            for (int y = 0; y < 36; y++) image.getPixelWriter().setColor(x, y, color);
+            for (int y = 0; y < 36; y++) {
+                image.getPixelWriter().setColor(x, y, color);
+            }
         }
         return image;
     }
