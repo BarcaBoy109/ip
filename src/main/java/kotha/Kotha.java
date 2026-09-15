@@ -24,33 +24,41 @@ public class Kotha {
         while (true) {
             String command = ui.readCommand();
             try {
-                Parser.CommandType commandType = parser.parse(command);
-                if (commandType == Parser.CommandType.BYE) {
-                    ui.printGoodbye();
+                if (processCommand(command)) {
                     break;
-                } else if (commandType == Parser.CommandType.LIST) {
-                    ui.printTaskList(listOfTasks.asList());
-                } else if (commandType == Parser.CommandType.FIND) {
-                    findTasks(command);
-                } else if (commandType == Parser.CommandType.MARK) {
-                    changeTaskStatus(command, true);
-                } else if (commandType == Parser.CommandType.UNMARK) {
-                    changeTaskStatus(command, false);
-                } else if (commandType == Parser.CommandType.TODO) {
-                    addTask(Task.createTodo(command));
-                } else if (commandType == Parser.CommandType.DEADLINE) {
-                    addTask(Task.createDeadline(command));
-                } else if (commandType == Parser.CommandType.EVENT) {
-                    addTask(Task.createEvent(command));
-                } else if (commandType == Parser.CommandType.DELETE) {
-                    deleteTask(command);
-                } else {
-                    throw new KothaException("Your Majesty, I do not recognise that command.");
                 }
             } catch (KothaException e) {
                 ui.printErrorMessage(e.getMessage());
             }
         }
+    }
+
+    /** Processes one command and returns whether the application should exit. */
+    private static boolean processCommand(String command) throws KothaException {
+        Parser.CommandType commandType = parser.parse(command);
+        if (commandType == Parser.CommandType.BYE) {
+            ui.printGoodbye();
+            return true;
+        } else if (commandType == Parser.CommandType.LIST) {
+            ui.printTaskList(listOfTasks.asList());
+        } else if (commandType == Parser.CommandType.FIND) {
+            findTasks(command);
+        } else if (commandType == Parser.CommandType.MARK) {
+            changeTaskStatus(command, true);
+        } else if (commandType == Parser.CommandType.UNMARK) {
+            changeTaskStatus(command, false);
+        } else if (commandType == Parser.CommandType.TODO) {
+            addTask(Task.createTodo(command));
+        } else if (commandType == Parser.CommandType.DEADLINE) {
+            addTask(Task.createDeadline(command));
+        } else if (commandType == Parser.CommandType.EVENT) {
+            addTask(Task.createEvent(command));
+        } else if (commandType == Parser.CommandType.DELETE) {
+            deleteTask(command);
+        } else {
+            throw new KothaException("Your Majesty, I do not recognise that command.");
+        }
+        return false;
     }
 
     /** Searches task descriptions for the keyword supplied after {@code find}. */
