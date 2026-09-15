@@ -11,6 +11,13 @@ import kotha.KothaException;
 
 /** Represents a task that can be completed or left incomplete. */
 public class Task {
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String DEADLINE_MARKER = " /by ";
+    private static final String EVENT_FROM_MARKER = " /from ";
+    private static final String EVENT_TO_MARKER = " /to ";
+
     private static final DateTimeFormatter DAY_MONTH_FORMAT =
             new java.time.format.DateTimeFormatterBuilder()
                     .appendPattern("d/M")
@@ -22,13 +29,14 @@ public class Task {
 
     /** Creates an incomplete task with the supplied description. */
     public Task(String description) {
+        assert description != null : "A task must have a description";
         this.description = description;
         this.isDone = false;
     }
 
     /** Creates a to-do task from a user command. */
     public static Task createTodo(String command) throws KothaException {
-        String description = command.substring("todo".length()).trim();
+        String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isEmpty()) {
             throw new KothaException("Your Majesty, a description is required after 'todo'.");
         }
@@ -37,36 +45,43 @@ public class Task {
 
     /** Creates a deadline task from a user command. */
     public static Task createDeadline(String command) throws KothaException {
-        int byIndex = command.indexOf(" /by ");
-        if (byIndex <= "deadline".length()) {
+        int byIndex = command.indexOf(DEADLINE_MARKER);
+        if (byIndex <= DEADLINE_COMMAND.length()) {
             throw new KothaException(
                     "Your Majesty, a deadline requires a description and a '/by' date.");
         }
-        String description = command.substring("deadline".length(), byIndex).trim();
-        String byText = command.substring(byIndex + " /by ".length()).trim();
+        String description = command.substring(DEADLINE_COMMAND.length(), byIndex).trim();
+        String byText = command.substring(byIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty() || byText.isEmpty()) {
             throw new KothaException(
                     "Your Majesty, a deadline requires a description and a '/by' date.");
         }
-        return new Deadline(description, parseDateTime(byText));
+        LocalDateTime deadline = parseDateTime(byText);
+        assert !description.isEmpty() : "Validated deadline description must not be empty";
+        assert deadline != null : "A parsed deadline must exist";
+        return new Deadline(description, deadline);
     }
 
     /** Creates an event task from a user command. */
     public static Task createEvent(String command) throws KothaException {
-        int fromIndex = command.indexOf(" /from ");
-        int toIndex = command.indexOf(" /to ");
-        if (fromIndex <= "event".length() || toIndex <= fromIndex) {
+        int fromIndex = command.indexOf(EVENT_FROM_MARKER);
+        int toIndex = command.indexOf(EVENT_TO_MARKER);
+        if (fromIndex <= EVENT_COMMAND.length() || toIndex <= fromIndex) {
             throw new KothaException(
                     "Your Majesty, an event requires a description, '/from', and '/to' time.");
         }
-        String description = command.substring("event".length(), fromIndex).trim();
-        String fromText = command.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String toText = command.substring(toIndex + " /to ".length()).trim();
+        String description = command.substring(EVENT_COMMAND.length(), fromIndex).trim();
+        String fromText = command.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex).trim();
+        String toText = command.substring(toIndex + EVENT_TO_MARKER.length()).trim();
         if (description.isEmpty() || fromText.isEmpty() || toText.isEmpty()) {
             throw new KothaException(
                     "Your Majesty, an event requires a description, '/from', and '/to' time.");
         }
-        return new Event(description, parseDateTime(fromText), parseDateTime(toText));
+        LocalDateTime from = parseDateTime(fromText);
+        LocalDateTime to = parseDateTime(toText);
+        assert !description.isEmpty() : "Validated event description must not be empty";
+        assert from != null && to != null : "A parsed event must have both endpoints";
+        return new Event(description, from, to);
     }
 
     /** Returns the status icon for this task. */
@@ -107,17 +122,24 @@ public class Task {
 
     /** Returns the date represented by supported user input. */
     private static LocalDate parseDate(String dateText) {
-        try {
-            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uuuu"));
-        } catch (DateTimeParseException ignored) {
-            // Try the next format.
+        LocalDate date = tryParseDate(dateText, DateTimeFormatter.ofPattern("d/M/uuuu"));
+        if (date != null) {
+            return date;
         }
-        try {
-            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uu"));
-        } catch (DateTimeParseException ignored) {
-            // Try the day/month format.
+        date = tryParseDate(dateText, DateTimeFormatter.ofPattern("d/M/uu"));
+        if (date != null) {
+            return date;
         }
         return LocalDate.parse(dateText, DAY_MONTH_FORMAT);
+    }
+
+    /** Attempts to parse a date with the supplied format, returning null on mismatch. */
+    private static LocalDate tryParseDate(String dateText, DateTimeFormatter formatter) {
+        try {
+            return LocalDate.parse(dateText, formatter);
+        } catch (DateTimeParseException ignored) {
+            return null;
+        }
     }
 
     /** Returns the task description for persistent storage. */

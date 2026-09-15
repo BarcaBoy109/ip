@@ -39,18 +39,18 @@ public class Ui {
 
     /** Displays all tasks with one-based numbering. */
     public void printTaskList(List<Task> tasks) {
-        System.out.println(LINE_BREAK);
-        System.out.println("Here are the tasks in your list:");
-        for (int pointer = 0; pointer < tasks.size(); pointer++) {
-            System.out.printf("%d.%s%n", pointer + 1, tasks.get(pointer));
-        }
-        System.out.println(LINE_BREAK);
+        printTasks(tasks, "Here are the tasks in your list:");
     }
 
     /** Displays tasks matching a search keyword with one-based numbering. */
     public void printSearchResults(List<Task> tasks) {
+        printTasks(tasks, "Here are the matching tasks in your list:");
+    }
+
+    /** Displays tasks with a heading and one-based numbering. */
+    private void printTasks(List<Task> tasks, String heading) {
         System.out.println(LINE_BREAK);
-        System.out.println("Here are the matching tasks in your list:");
+        System.out.println(heading);
         for (int pointer = 0; pointer < tasks.size(); pointer++) {
             System.out.printf("%d.%s%n", pointer + 1, tasks.get(pointer));
         }

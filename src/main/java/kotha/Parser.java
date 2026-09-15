@@ -2,6 +2,16 @@ package kotha;
 
 /** Identifies the type of command entered by the user. */
 public class Parser {
+    private static final String BYE_COMMAND = "bye";
+    private static final String LIST_COMMAND = "list";
+    private static final String FIND_COMMAND = "find";
+    private static final String MARK_COMMAND = "mark";
+    private static final String UNMARK_COMMAND = "unmark";
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String DELETE_COMMAND = "delete";
+
     /** The command types understood by Kotha. */
     public enum CommandType {
         BYE, LIST, FIND, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
@@ -13,32 +23,33 @@ public class Parser {
      * @param input the String input from the user.
      */
     public CommandType parse(String input) {
+        assert input != null : "The parser must receive a command string";
         String command = input.trim();
-        if (command.equals("bye")) {
+        if (command.equals(BYE_COMMAND)) {
             return CommandType.BYE;
         }
-        if (command.equals("list")) {
+        if (command.equals(LIST_COMMAND)) {
             return CommandType.LIST;
         }
-        if (hasCommandWord(command, "find")) {
+        if (hasCommandWord(command, FIND_COMMAND)) {
             return CommandType.FIND;
         }
-        if (hasCommandWord(command, "mark")) {
+        if (hasCommandWord(command, MARK_COMMAND)) {
             return CommandType.MARK;
         }
-        if (hasCommandWord(command, "unmark")) {
+        if (hasCommandWord(command, UNMARK_COMMAND)) {
             return CommandType.UNMARK;
         }
-        if (hasCommandWord(command, "todo")) {
+        if (hasCommandWord(command, TODO_COMMAND)) {
             return CommandType.TODO;
         }
-        if (hasCommandWord(command, "deadline")) {
+        if (hasCommandWord(command, DEADLINE_COMMAND)) {
             return CommandType.DEADLINE;
         }
-        if (hasCommandWord(command, "event")) {
+        if (hasCommandWord(command, EVENT_COMMAND)) {
             return CommandType.EVENT;
         }
-        if (hasCommandWord(command, "delete")) {
+        if (hasCommandWord(command, DELETE_COMMAND)) {
             return CommandType.DELETE;
         } else {
             return CommandType.UNKNOWN;

@@ -8,18 +8,22 @@ import javafx.scene.layout.HBox;
 
 /** A speech bubble displayed in the chatbot conversation. */
 public final class DialogBox extends HBox {
+    private static final double LABEL_MAX_WIDTH = 320;
+    private static final double ICON_SIZE = 36;
+    private static final double CONTENT_SPACING = 6;
+
     private DialogBox(String text, boolean fromBot, Image image) {
         Label label = new Label(text);
         label.setWrapText(true);
-        label.setMaxWidth(320);
+        label.setMaxWidth(LABEL_MAX_WIDTH);
         label.getStyleClass().add(fromBot ? "bot-bubble" : "user-bubble");
         setAlignment(fromBot ? Pos.CENTER_LEFT : Pos.CENTER_RIGHT);
         ImageView icon = new ImageView(image);
-        icon.setFitWidth(36);
-        icon.setFitHeight(36);
+        icon.setFitWidth(ICON_SIZE);
+        icon.setFitHeight(ICON_SIZE);
         icon.setPreserveRatio(true);
         setMaxWidth(Double.MAX_VALUE);
-        setSpacing(6);
+        setSpacing(CONTENT_SPACING);
         if (fromBot) {
             getChildren().addAll(icon, label);
         } else {
