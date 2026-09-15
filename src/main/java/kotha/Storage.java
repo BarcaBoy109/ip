@@ -70,33 +70,37 @@ public class Storage {
             return null;
         }
 
-        Task task;
         try {
-            switch (parts[0]) {
-                case "T":
-                    task = new ToDo(parts[2]);
-                    break;
-                case "D":
-                    if (parts.length != 4) {
-                        return null;
-                    }
-                    task = new Deadline(parts[2], LocalDateTime.parse(parts[3]));
-                    break;
-                case "E":
-                    if (parts.length != 5) {
-                        return null;
-                    }
-                    task = new Event(parts[2], LocalDateTime.parse(parts[3]),
-                            LocalDateTime.parse(parts[4]));
-                    break;
-                default:
-                    return null;
+            Task task = createTask(parts);
+            if (task == null) {
+                return null;
             }
+            task.setDone("1".equals(parts[1]));
+            return task;
         } catch (DateTimeParseException exception) {
             return null;
         }
-        task.setDone("1".equals(parts[1]));
-        return task;
+    }
+
+    /** Creates a task from validated storage fields, or returns null for an unknown shape. */
+    private Task createTask(String[] parts) {
+        switch (parts[0]) {
+            case "T":
+                return new ToDo(parts[2]);
+            case "D":
+                if (parts.length != 4) {
+                    return null;
+                }
+                return new Deadline(parts[2], LocalDateTime.parse(parts[3]));
+            case "E":
+                if (parts.length != 5) {
+                    return null;
+                }
+                return new Event(parts[2], LocalDateTime.parse(parts[3]),
+                        LocalDateTime.parse(parts[4]));
+            default:
+                return null;
+        }
     }
 
     private String formatTask(Task task) {
