@@ -22,7 +22,7 @@ public class Deadline extends kotha.tasks.Task {
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + "(by: " + deadline.format(DISPLAY_FORMAT) + ")";
+        return "[D]" + super.toString() + " (by: " + deadline.format(DISPLAY_FORMAT) + ")";
     }
 
     @Override
