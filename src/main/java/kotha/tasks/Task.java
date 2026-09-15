@@ -122,17 +122,24 @@ public class Task {
 
     /** Returns the date represented by supported user input. */
     private static LocalDate parseDate(String dateText) {
-        try {
-            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uuuu"));
-        } catch (DateTimeParseException ignored) {
-            // Try the next format.
+        LocalDate date = tryParseDate(dateText, DateTimeFormatter.ofPattern("d/M/uuuu"));
+        if (date != null) {
+            return date;
         }
-        try {
-            return LocalDate.parse(dateText, DateTimeFormatter.ofPattern("d/M/uu"));
-        } catch (DateTimeParseException ignored) {
-            // Try the day/month format.
+        date = tryParseDate(dateText, DateTimeFormatter.ofPattern("d/M/uu"));
+        if (date != null) {
+            return date;
         }
         return LocalDate.parse(dateText, DAY_MONTH_FORMAT);
+    }
+
+    /** Attempts to parse a date with the supplied format, returning null on mismatch. */
+    private static LocalDate tryParseDate(String dateText, DateTimeFormatter formatter) {
+        try {
+            return LocalDate.parse(dateText, formatter);
+        } catch (DateTimeParseException ignored) {
+            return null;
+        }
     }
 
     /** Returns the task description for persistent storage. */
