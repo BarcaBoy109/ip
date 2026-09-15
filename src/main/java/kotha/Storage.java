@@ -29,7 +29,7 @@ public class Storage {
     }
 
     /** Loads all the valid tasks stored on disk. */
-    public ArrayList<Task> loadTasks() {
+    public List<Task> loadTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         if (!Files.exists(filePath)) {
             return tasks;
