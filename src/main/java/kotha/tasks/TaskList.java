@@ -10,6 +10,7 @@ public class TaskList {
 
     /** Creates a task list containing the supplied tasks. */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "A task list must be constructed from a non-null collection";
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -19,6 +20,7 @@ public class TaskList {
     }
     /** Adds a task to the list. */
     public void add(Task task) {
+        assert task != null : "The task list must not contain null tasks";
         tasks.add(task);
     }
 
@@ -39,6 +41,8 @@ public class TaskList {
 
     /** Returns a read-only copy for display and persistence. */
     public List<Task> asList() {
+        assert tasks.stream().noneMatch(task -> task == null)
+                : "The task list invariant forbids null tasks";
         return List.copyOf(tasks);
     }
 
