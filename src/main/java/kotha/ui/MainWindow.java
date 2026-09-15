@@ -14,6 +14,8 @@ import kotha.KothaEngine;
 
 /** Controller for Kotha's chatbot conversation window. */
 public class MainWindow extends AnchorPane {
+    private static final int PROFILE_IMAGE_SIZE = 36;
+
     @FXML private ScrollPane scrollPane;
     @FXML private VBox dialogContainer;
     @FXML private TextField userInput;
@@ -54,9 +56,9 @@ public class MainWindow extends AnchorPane {
     }
 
     private static Image createDefaultImage(Color color) {
-        WritableImage image = new WritableImage(36, 36);
-        for (int x = 0; x < 36; x++) {
-            for (int y = 0; y < 36; y++) {
+        WritableImage image = new WritableImage(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+        for (int x = 0; x < PROFILE_IMAGE_SIZE; x++) {
+            for (int y = 0; y < PROFILE_IMAGE_SIZE; y++) {
                 image.getPixelWriter().setColor(x, y, color);
             }
         }
