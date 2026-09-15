@@ -46,21 +46,15 @@ public class KothaEngine {
             case TODO:
                 Task todo = Task.createTodo(command);
                 assert todo != null : "Successful todo creation must produce a task";
-                tasks.add(todo);
-                save();
-                return "Got it. I have added the following todo task, master:\n" + tasks.get(tasks.size() - 1);
+                return addTask(todo, "Got it. I have added the following todo task, master:");
             case DEADLINE:
                 Task deadline = Task.createDeadline(command);
                 assert deadline != null : "Successful deadline creation must produce a task";
-                tasks.add(deadline);
-                save();
-                return "Got it. I have added the following deadline task, master:\n" + tasks.get(tasks.size() - 1);
+                return addTask(deadline, "Got it. I have added the following deadline task, master:");
             case EVENT:
                 Task event = Task.createEvent(command);
                 assert event != null : "Successful event creation must produce a task";
-                tasks.add(event);
-                save();
-                return "Got it. I have added the following event task, master:\n" + tasks.get(tasks.size() - 1);
+                return addTask(event, "Got it. I have added the following event task, master:");
             case MARK:
             case UNMARK:
                 int markIndex = taskIndex(command, type == Parser.CommandType.MARK ? "mark" : "unmark");
@@ -77,6 +71,13 @@ public class KothaEngine {
             default:
                 return "I do not recognise whatever you have written up there";
         }
+    }
+
+    /** Adds a newly created task, persists it, and formats the confirmation response. */
+    private String addTask(Task task, String responsePrefix) {
+        tasks.add(task);
+        save();
+        return responsePrefix + "\n" + tasks.get(tasks.size() - 1);
     }
 
     /** Returns the style category for the most recently processed response. */
