@@ -16,6 +16,11 @@ import kotha.tasks.ToDo;
 /** Saves tasks to, and restores tasks from, a local text file. */
 public class Storage {
     private static final String SEPARATOR = " | ";
+    private static final String TODO_CODE = "T";
+    private static final String DEADLINE_CODE = "D";
+    private static final String EVENT_CODE = "E";
+    private static final String DONE_STATUS = "1";
+    private static final String NOT_DONE_STATUS = "0";
     private final Path filePath;
 
     /** Creates storage backed by the supplied file path. */
@@ -75,7 +80,7 @@ public class Storage {
             if (task == null) {
                 return null;
             }
-            task.setDone("1".equals(parts[1]));
+            task.setDone(DONE_STATUS.equals(parts[1]));
             return task;
         } catch (DateTimeParseException exception) {
             return null;
@@ -85,14 +90,14 @@ public class Storage {
     /** Creates a task from validated storage fields, or returns null for an unknown shape. */
     private Task createTask(String[] parts) {
         switch (parts[0]) {
-            case "T":
+            case TODO_CODE:
                 return new ToDo(parts[2]);
-            case "D":
+            case DEADLINE_CODE:
                 if (parts.length != 4) {
                     return null;
                 }
                 return new Deadline(parts[2], LocalDateTime.parse(parts[3]));
-            case "E":
+            case EVENT_CODE:
                 if (parts.length != 5) {
                     return null;
                 }
@@ -105,19 +110,19 @@ public class Storage {
 
     private String formatTask(Task task) {
         assert task != null : "Only non-null tasks can be persisted";
-        String status = task.isDone() ? "1" : "0";
+        String status = task.isDone() ? DONE_STATUS : NOT_DONE_STATUS;
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
-            return "D" + SEPARATOR + status + SEPARATOR + task.getDescription()
+            return DEADLINE_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
                     + SEPARATOR + deadline.getDeadline();
         }
         if (task instanceof Event) {
             Event event = (Event) task;
-            return "E" + SEPARATOR + status + SEPARATOR + task.getDescription()
+            return EVENT_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
                     + SEPARATOR + event.getFrom() + SEPARATOR + event.getTo();
         }
         if (task instanceof ToDo) {
-            return "T" + SEPARATOR + status + SEPARATOR + task.getDescription();
+            return TODO_CODE + SEPARATOR + status + SEPARATOR + task.getDescription();
         }
         throw new IllegalArgumentException("Your Majesty, you have bestowed upon me an unsupported task type.");
     }
