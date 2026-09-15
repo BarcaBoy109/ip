@@ -57,10 +57,7 @@ public class KothaEngine {
                 return addTask(event, "Got it. I have added the following event task, master:");
             case MARK:
             case UNMARK:
-                int markIndex = taskIndex(command, type == Parser.CommandType.MARK ? "mark" : "unmark");
-                tasks.get(markIndex).setDone(type == Parser.CommandType.MARK);
-                save();
-                return "Updated task:\n" + tasks.get(markIndex);
+                return updateTaskStatus(command, type == Parser.CommandType.MARK);
             case DELETE:
                 int deleteIndex = taskIndex(command, "delete");
                 Task removed = tasks.remove(deleteIndex);
@@ -78,6 +75,15 @@ public class KothaEngine {
         tasks.add(task);
         save();
         return responsePrefix + "\n" + tasks.get(tasks.size() - 1);
+    }
+
+    /** Updates a task's completion status, persists it, and formats the response. */
+    private String updateTaskStatus(String command, boolean isDone) throws KothaException {
+        String commandWord = isDone ? "mark" : "unmark";
+        int taskIndex = taskIndex(command, commandWord);
+        tasks.get(taskIndex).setDone(isDone);
+        save();
+        return "Updated task:\n" + tasks.get(taskIndex);
     }
 
     /** Returns the style category for the most recently processed response. */
