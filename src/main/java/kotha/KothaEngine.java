@@ -20,6 +20,7 @@ public class KothaEngine {
 
     /** Executes one command and returns the text that an interface should display. */
     public String processCommand(String command) {
+        assert command != null : "The engine must process a non-null command";
         try {
             Parser.CommandType type = parser.parse(command);
             lastResponseStyle = type == Parser.CommandType.UNKNOWN
@@ -34,15 +35,21 @@ public class KothaEngine {
                     }
                     return formatTasks(tasks.find(keyword), "Master here are the matching tasks in your list:");
                 case TODO:
-                    tasks.add(Task.createTodo(command));
+                    Task todo = Task.createTodo(command);
+                    assert todo != null : "Successful todo creation must produce a task";
+                    tasks.add(todo);
                     save();
                     return "Got it. I have added the following todo task, master:\n" + tasks.get(tasks.size() - 1);
                 case DEADLINE:
-                    tasks.add(Task.createDeadline(command));
+                    Task deadline = Task.createDeadline(command);
+                    assert deadline != null : "Successful deadline creation must produce a task";
+                    tasks.add(deadline);
                     save();
                     return "Got it. I have added the following deadline task, master:\n" + tasks.get(tasks.size() - 1);
                 case EVENT:
-                    tasks.add(Task.createEvent(command));
+                    Task event = Task.createEvent(command);
+                    assert event != null : "Successful event creation must produce a task";
+                    tasks.add(event);
                     save();
                     return "Got it. I have added the following event task, master:\n" + tasks.get(tasks.size() - 1);
                 case MARK:
@@ -92,6 +99,8 @@ public class KothaEngine {
         if (index < 0 || index >= tasks.size()) {
             throw new KothaException("That task number does not exist.");
         }
+        assert index >= 0 && index < tasks.size()
+                : "A validated task number must resolve to an existing task";
         return index;
     }
 

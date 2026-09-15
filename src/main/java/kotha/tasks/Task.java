@@ -22,6 +22,7 @@ public class Task {
 
     /** Creates an incomplete task with the supplied description. */
     public Task(String description) {
+        assert description != null : "A task must have a description";
         this.description = description;
         this.isDone = false;
     }
@@ -48,7 +49,10 @@ public class Task {
             throw new KothaException(
                     "Your Majesty, a deadline requires a description and a '/by' date.");
         }
-        return new Deadline(description, parseDateTime(byText));
+        LocalDateTime deadline = parseDateTime(byText);
+        assert !description.isEmpty() : "Validated deadline description must not be empty";
+        assert deadline != null : "A parsed deadline must exist";
+        return new Deadline(description, deadline);
     }
 
     /** Creates an event task from a user command. */
@@ -66,7 +70,11 @@ public class Task {
             throw new KothaException(
                     "Your Majesty, an event requires a description, '/from', and '/to' time.");
         }
-        return new Event(description, parseDateTime(fromText), parseDateTime(toText));
+        LocalDateTime from = parseDateTime(fromText);
+        LocalDateTime to = parseDateTime(toText);
+        assert !description.isEmpty() : "Validated event description must not be empty";
+        assert from != null && to != null : "A parsed event must have both endpoints";
+        return new Event(description, from, to);
     }
 
     /** Returns the status icon for this task. */

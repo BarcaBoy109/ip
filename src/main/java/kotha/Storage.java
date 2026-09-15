@@ -100,6 +100,7 @@ public class Storage {
     }
 
     private String formatTask(Task task) {
+        assert task != null : "Only non-null tasks can be persisted";
         String status = task.isDone() ? "1" : "0";
         if (task instanceof Deadline) {
             Deadline deadline = (Deadline) task;
