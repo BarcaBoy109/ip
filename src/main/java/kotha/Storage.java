@@ -54,10 +54,9 @@ public class Storage {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
-                lines.add(formatTask(task));
-            }
+            List<String> lines = tasks.stream()
+                    .map(this::formatTask)
+                    .toList();
             Files.write(filePath, lines);
         } catch (IOException e) {
             System.out.println("Your Majesty, this humble butler could not save your tasks.");
