@@ -8,6 +8,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotha.tasks.Constraint;
 import kotha.tasks.Deadline;
 import kotha.tasks.Event;
 import kotha.tasks.Task;
@@ -19,6 +20,7 @@ public class Storage {
     private static final String TODO_CODE = "T";
     private static final String DEADLINE_CODE = "D";
     private static final String EVENT_CODE = "E";
+    private static final String CONSTRAINT_CODE = "C";
     private static final String DONE_STATUS = "1";
     private static final String NOT_DONE_STATUS = "0";
     private final Path filePath;
@@ -102,6 +104,11 @@ public class Storage {
                 }
                 return new Event(parts[2], LocalDateTime.parse(parts[3]),
                         LocalDateTime.parse(parts[4]));
+            case CONSTRAINT_CODE:
+                if (parts.length != 4) {
+                    return null;
+                }
+                return new Constraint(parts[2], parts[3]);
             default:
                 return null;
         }
@@ -119,6 +126,11 @@ public class Storage {
             Event event = (Event) task;
             return EVENT_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
                     + SEPARATOR + event.getFrom() + SEPARATOR + event.getTo();
+        }
+        if (task instanceof Constraint) {
+            Constraint constraint = (Constraint) task;
+            return CONSTRAINT_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
+                    + SEPARATOR + constraint.getAfter();
         }
         if (task instanceof ToDo) {
             return TODO_CODE + SEPARATOR + status + SEPARATOR + task.getDescription();

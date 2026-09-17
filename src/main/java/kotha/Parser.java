@@ -10,11 +10,12 @@ public class Parser {
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
+    private static final String CONSTRAINT_COMMAND = "constraint";
     private static final String DELETE_COMMAND = "delete";
 
     /** The command types understood by Kotha. */
     public enum CommandType {
-        BYE, LIST, FIND, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, UNKNOWN
+        BYE, LIST, FIND, MARK, UNMARK, TODO, DEADLINE, EVENT, CONSTRAINT, DELETE, UNKNOWN
     }
 
     /**
@@ -48,6 +49,9 @@ public class Parser {
         }
         if (hasCommandWord(command, EVENT_COMMAND)) {
             return CommandType.EVENT;
+        }
+        if (hasCommandWord(command, CONSTRAINT_COMMAND)) {
+            return CommandType.CONSTRAINT;
         }
         if (hasCommandWord(command, DELETE_COMMAND)) {
             return CommandType.DELETE;

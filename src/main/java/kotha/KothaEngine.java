@@ -55,6 +55,10 @@ public class KothaEngine {
                 Task event = Task.createEvent(command);
                 assert event != null : "Successful event creation must produce a task";
                 return addTask(event, "Got it. I have added the following event task, master:");
+            case CONSTRAINT:
+                Task constraint = Task.createConstraint(command);
+                assert constraint != null : "Successful constraint creation must produce a task";
+                return addTask(constraint, "Got it. I have added the following constraint task, master:");
             case MARK:
             case UNMARK:
                 return updateTaskStatus(command, type == Parser.CommandType.MARK);
