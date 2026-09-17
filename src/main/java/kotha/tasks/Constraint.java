@@ -1,9 +1,12 @@
 package kotha.tasks;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /** Represents a task that can only be done after a specified time or task. */
 public class Constraint extends Task {
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu hh:mma");
     private final String after;
     private final LocalDateTime afterDate;
 
@@ -33,7 +36,7 @@ public class Constraint extends Task {
 
     @Override
     public String toString() {
-        String trigger = afterDate == null ? after : afterDate.toString();
+        String trigger = afterDate == null ? after : afterDate.format(DISPLAY_FORMAT);
         return "[C]" + super.toString() + " (after: " + trigger + ")";
     }
 }
