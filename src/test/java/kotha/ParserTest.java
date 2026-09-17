@@ -23,6 +23,7 @@ class ParserTest {
         assertEquals(CommandType.TODO, parser.parse("todo read book"));
         assertEquals(CommandType.DEADLINE, parser.parse("deadline submit report /by 1/9"));
         assertEquals(CommandType.EVENT, parser.parse("event meeting /from 1/9 /to 2/9"));
+        assertEquals(CommandType.CONSTRAINT, parser.parse("constraint return book /after exam"));
         assertEquals(CommandType.DELETE, parser.parse("delete 1"));
     }
 

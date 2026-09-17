@@ -14,9 +14,11 @@ public class Task {
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
+    private static final String CONSTRAINT_COMMAND = "constraint";
     private static final String DEADLINE_MARKER = " /by ";
     private static final String EVENT_FROM_MARKER = " /from ";
     private static final String EVENT_TO_MARKER = " /to ";
+    private static final String CONSTRAINT_AFTER_MARKER = " /after ";
 
     private static final DateTimeFormatter DAY_MONTH_FORMAT =
             new java.time.format.DateTimeFormatterBuilder()
@@ -82,6 +84,22 @@ public class Task {
         assert !description.isEmpty() : "Validated event description must not be empty";
         assert from != null && to != null : "A parsed event must have both endpoints";
         return new Event(description, from, to);
+    }
+
+    /** Creates a constraint task from a user command. */
+    public static Task createConstraint(String command) throws KothaException {
+        int afterIndex = command.indexOf(CONSTRAINT_AFTER_MARKER);
+        if (afterIndex <= CONSTRAINT_COMMAND.length()) {
+            throw new KothaException(
+                    "Your Majesty, a constraint requires a description and a '/after' trigger.");
+        }
+        String description = command.substring(CONSTRAINT_COMMAND.length(), afterIndex).trim();
+        String after = command.substring(afterIndex + CONSTRAINT_AFTER_MARKER.length()).trim();
+        if (description.isEmpty() || after.isEmpty()) {
+            throw new KothaException(
+                    "Your Majesty, a constraint requires a description and a '/after' trigger.");
+        }
+        return new Constraint(description, after);
     }
 
     /** Returns the status icon for this task. */
