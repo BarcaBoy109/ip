@@ -1,13 +1,24 @@
 package kotha.tasks;
 
+import java.time.LocalDateTime;
+
 /** Represents a task that can only be done after a specified time or task. */
 public class Constraint extends Task {
     private final String after;
+    private final LocalDateTime afterDate;
 
     /** Creates an incomplete constraint task with the supplied trigger. */
     public Constraint(String description, String after) {
         super(description);
         this.after = after;
+        this.afterDate = null;
+    }
+
+    /** Creates an incomplete constraint task with the supplied date trigger. */
+    public Constraint(String description, LocalDateTime afterDate) {
+        super(description);
+        this.after = null;
+        this.afterDate = afterDate;
     }
 
     /** Returns the trigger text for persistent storage. */
@@ -15,8 +26,14 @@ public class Constraint extends Task {
         return after;
     }
 
+    /** Returns the date-time trigger, or null when this is a text-triggered constraint. */
+    public LocalDateTime getAfterDate() {
+        return afterDate;
+    }
+
     @Override
     public String toString() {
-        return "[C]" + super.toString() + " (after: " + after + ")";
+        String trigger = afterDate == null ? after : afterDate.toString();
+        return "[C]" + super.toString() + " (after: " + trigger + ")";
     }
 }

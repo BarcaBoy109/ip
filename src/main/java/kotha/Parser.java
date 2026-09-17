@@ -24,7 +24,9 @@ public class Parser {
      * @param input the String input from the user.
      */
     public CommandType parse(String input) {
-        assert input != null : "The parser must receive a command string";
+        if (input == null) {
+            return CommandType.UNKNOWN;
+        }
         String command = input.trim();
         if (command.equals(BYE_COMMAND)) {
             return CommandType.BYE;

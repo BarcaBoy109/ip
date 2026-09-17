@@ -81,9 +81,12 @@ public class Storage {
             if (task == null) {
                 return null;
             }
+            if (!DONE_STATUS.equals(parts[1]) && !NOT_DONE_STATUS.equals(parts[1])) {
+                return null;
+            }
             task.setDone(DONE_STATUS.equals(parts[1]));
             return task;
-        } catch (DateTimeParseException exception) {
+        } catch (RuntimeException exception) {
             return null;
         }
     }
@@ -105,6 +108,9 @@ public class Storage {
                 return new Event(parts[2], LocalDateTime.parse(parts[3]),
                         LocalDateTime.parse(parts[4]));
             case CONSTRAINT_CODE:
+                if (parts.length == 5 && "DATE".equals(parts[3])) {
+                    return new Constraint(parts[2], LocalDateTime.parse(parts[4]));
+                }
                 if (parts.length != 4) {
                     return null;
                 }
@@ -129,6 +135,10 @@ public class Storage {
         }
         if (task instanceof Constraint) {
             Constraint constraint = (Constraint) task;
+            if (constraint.getAfterDate() != null) {
+                return CONSTRAINT_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
+                        + SEPARATOR + "DATE" + SEPARATOR + constraint.getAfterDate();
+            }
             return CONSTRAINT_CODE + SEPARATOR + status + SEPARATOR + task.getDescription()
                     + SEPARATOR + constraint.getAfter();
         }

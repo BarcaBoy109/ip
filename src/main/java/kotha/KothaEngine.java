@@ -38,13 +38,14 @@ public class KothaEngine {
 
     /** Executes one command and returns the text that an interface should display. */
     public String processCommand(String command) {
-        assert command != null : "The engine must process a non-null command";
         Persona persona = choosePersona();
         try {
             Parser.CommandType type = parser.parse(command);
             return executeCommand(type, command, persona);
         } catch (KothaException exception) {
             return formatError(exception.getMessage(), persona);
+        } catch (RuntimeException exception) {
+            return formatError("The command contains an invalid value.", persona);
         }
     }
 
@@ -110,6 +111,11 @@ public class KothaEngine {
 
     /** Adds a newly created task, persists it, and formats the confirmation response. */
     private String addTask(Task task, String responsePrefix) {
+        for (Task existing : tasks.asList()) {
+            if (existing.getDescription().equalsIgnoreCase(task.getDescription())) {
+                throw new IllegalArgumentException("A task with the same description already exists.");
+            }
+        }
         tasks.add(task);
         save();
         return responsePrefix + "\n" + tasks.get(tasks.size() - 1);
@@ -183,6 +189,18 @@ public class KothaEngine {
                 return persona.choosePhrase(
                         "Alas, Your Majesty, no task bearing that number dwelleth within thy ledger.",
                         "That task number does not exist. Bro is selecting imaginary tasks now.");
+            case "An event must end after it starts.":
+                return persona.choosePhrase(
+                        "Your Majesty, an event's ending hour must follow its appointed beginning.",
+                        "That event ends before it starts. Time travel is not supported, bestie.");
+            case "A task with the same description already exists.":
+                return persona.choosePhrase(
+                        "Your Majesty, that duty already graces thy royal ledger.",
+                        "You already have a task with that description. We are not making clones today.");
+            case "The command contains an invalid value.":
+                return persona.choosePhrase(
+                        "Your Majesty, one of the values in thy command is not fit for the royal ledger.",
+                        "One of those values is busted. Check your command and try again, bestie.");
             default:
                 return persona.choosePhrase(
                         "My deepest apologies, Your Majesty; thy command could not be fulfilled.",
@@ -195,7 +213,12 @@ public class KothaEngine {
         if (!number.matches("\\d+")) {
             throw new KothaException("Please provide a valid task number.");
         }
-        int index = Integer.parseInt(number) - 1;
+        int index;
+        try {
+            index = Math.subtractExact(Integer.parseInt(number), 1);
+        } catch (NumberFormatException | ArithmeticException exception) {
+            throw new KothaException("Please provide a valid task number.");
+        }
         if (index < 0 || index >= tasks.size()) {
             throw new KothaException("That task number does not exist.");
         }

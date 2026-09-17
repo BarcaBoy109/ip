@@ -19,6 +19,7 @@ public class Task {
     private static final String EVENT_FROM_MARKER = " /from ";
     private static final String EVENT_TO_MARKER = " /to ";
     private static final String CONSTRAINT_AFTER_MARKER = " /after ";
+    private static final String CONSTRAINT_AFTER_DATE_MARKER = " /afterdate ";
 
     private static final DateTimeFormatter DAY_MONTH_FORMAT =
             new java.time.format.DateTimeFormatterBuilder()
@@ -38,6 +39,9 @@ public class Task {
 
     /** Creates a to-do task from a user command. */
     public static Task createTodo(String command) throws KothaException {
+        if (command == null || !command.startsWith(TODO_COMMAND)) {
+            throw new KothaException("A description is required after 'todo'.");
+        }
         String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isEmpty()) {
             throw new KothaException("A description is required after 'todo'.");
@@ -47,8 +51,11 @@ public class Task {
 
     /** Creates a deadline task from a user command. */
     public static Task createDeadline(String command) throws KothaException {
+        if (command == null) {
+            throw new KothaException("A deadline requires a description and a '/by' date.");
+        }
         int byIndex = command.indexOf(DEADLINE_MARKER);
-        if (byIndex <= DEADLINE_COMMAND.length()) {
+        if (byIndex <= DEADLINE_COMMAND.length() || command.indexOf(DEADLINE_MARKER, byIndex + 1) >= 0) {
             throw new KothaException(
                     "A deadline requires a description and a '/by' date.");
         }
@@ -66,9 +73,14 @@ public class Task {
 
     /** Creates an event task from a user command. */
     public static Task createEvent(String command) throws KothaException {
+        if (command == null) {
+            throw new KothaException("An event requires a description, '/from', and '/to' time.");
+        }
         int fromIndex = command.indexOf(EVENT_FROM_MARKER);
         int toIndex = command.indexOf(EVENT_TO_MARKER);
-        if (fromIndex <= EVENT_COMMAND.length() || toIndex <= fromIndex) {
+        if (fromIndex <= EVENT_COMMAND.length() || toIndex <= fromIndex
+                || command.indexOf(EVENT_FROM_MARKER, fromIndex + 1) >= 0
+                || command.indexOf(EVENT_TO_MARKER, toIndex + 1) >= 0) {
             throw new KothaException(
                     "An event requires a description, '/from', and '/to' time.");
         }
@@ -81,6 +93,9 @@ public class Task {
         }
         LocalDateTime from = parseDateTime(fromText);
         LocalDateTime to = parseDateTime(toText);
+        if (!from.isBefore(to)) {
+            throw new KothaException("An event must end after it starts.");
+        }
         assert !description.isEmpty() : "Validated event description must not be empty";
         assert from != null && to != null : "A parsed event must have both endpoints";
         return new Event(description, from, to);
@@ -88,16 +103,25 @@ public class Task {
 
     /** Creates a constraint task from a user command. */
     public static Task createConstraint(String command) throws KothaException {
-        int afterIndex = command.indexOf(CONSTRAINT_AFTER_MARKER);
+        if (command == null) {
+            throw new KothaException(
+                    "A constraint requires a description and a '/after' or '/afterdate' trigger.");
+        }
+        boolean isDateTrigger = command.contains(CONSTRAINT_AFTER_DATE_MARKER);
+        String marker = isDateTrigger ? CONSTRAINT_AFTER_DATE_MARKER : CONSTRAINT_AFTER_MARKER;
+        int afterIndex = command.indexOf(marker);
         if (afterIndex <= CONSTRAINT_COMMAND.length()) {
             throw new KothaException(
-                    "A constraint requires a description and a '/after' trigger.");
+                    "A constraint requires a description and a '/after' or '/afterdate' trigger.");
         }
         String description = command.substring(CONSTRAINT_COMMAND.length(), afterIndex).trim();
-        String after = command.substring(afterIndex + CONSTRAINT_AFTER_MARKER.length()).trim();
+        String after = command.substring(afterIndex + marker.length()).trim();
         if (description.isEmpty() || after.isEmpty()) {
             throw new KothaException(
-                    "A constraint requires a description and a '/after' trigger.");
+                    "A constraint requires a description and a '/after' or '/afterdate' trigger.");
+        }
+        if (isDateTrigger) {
+            return new Constraint(description, parseDateTime(after));
         }
         return new Constraint(description, after);
     }
@@ -131,7 +155,7 @@ public class Task {
             if (parts.length == 2) {
                 return LocalDateTime.of(parseDate(parts[0]), LocalTime.parse(parts[1], TIME_FORMAT));
             }
-        } catch (DateTimeParseException ignored) {
+        } catch (DateTimeParseException | ArithmeticException ignored) {
             // Invalid input.
         }
         throw new KothaException(
