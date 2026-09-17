@@ -37,14 +37,17 @@ public final class DialogBox extends HBox {
 
     /** Creates a bot speech bubble with an icon. */
     public static DialogBox getBotDialog(String text, Image image) {
-        return getBotDialog(text, image, "list");
+        return getBotDialog(text, image, "royal");
     }
 
-    /** Creates a bot bubble with a response-specific colour category. */
+    /** Creates a bot bubble with a personality-specific color category. */
     public static DialogBox getBotDialog(String text, Image image, String style) {
         DialogBox box = new DialogBox(text, true, image);
         Label label = (Label) box.getChildren().get(1);
         label.getStyleClass().add(style + "-bubble");
+        Label personaIcon = new Label(style.equals("royal") ? "♛" : "♠");
+        personaIcon.getStyleClass().addAll("persona-icon", style + "-icon");
+        box.getChildren().add(0, personaIcon);
         return box;
     }
 }

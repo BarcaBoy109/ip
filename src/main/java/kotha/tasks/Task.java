@@ -40,7 +40,7 @@ public class Task {
     public static Task createTodo(String command) throws KothaException {
         String description = command.substring(TODO_COMMAND.length()).trim();
         if (description.isEmpty()) {
-            throw new KothaException("Your Majesty, a description is required after 'todo'.");
+            throw new KothaException("A description is required after 'todo'.");
         }
         return new ToDo(description);
     }
@@ -50,13 +50,13 @@ public class Task {
         int byIndex = command.indexOf(DEADLINE_MARKER);
         if (byIndex <= DEADLINE_COMMAND.length()) {
             throw new KothaException(
-                    "Your Majesty, a deadline requires a description and a '/by' date.");
+                    "A deadline requires a description and a '/by' date.");
         }
         String description = command.substring(DEADLINE_COMMAND.length(), byIndex).trim();
         String byText = command.substring(byIndex + DEADLINE_MARKER.length()).trim();
         if (description.isEmpty() || byText.isEmpty()) {
             throw new KothaException(
-                    "Your Majesty, a deadline requires a description and a '/by' date.");
+                    "A deadline requires a description and a '/by' date.");
         }
         LocalDateTime deadline = parseDateTime(byText);
         assert !description.isEmpty() : "Validated deadline description must not be empty";
@@ -70,14 +70,14 @@ public class Task {
         int toIndex = command.indexOf(EVENT_TO_MARKER);
         if (fromIndex <= EVENT_COMMAND.length() || toIndex <= fromIndex) {
             throw new KothaException(
-                    "Your Majesty, an event requires a description, '/from', and '/to' time.");
+                    "An event requires a description, '/from', and '/to' time.");
         }
         String description = command.substring(EVENT_COMMAND.length(), fromIndex).trim();
         String fromText = command.substring(fromIndex + EVENT_FROM_MARKER.length(), toIndex).trim();
         String toText = command.substring(toIndex + EVENT_TO_MARKER.length()).trim();
         if (description.isEmpty() || fromText.isEmpty() || toText.isEmpty()) {
             throw new KothaException(
-                    "Your Majesty, an event requires a description, '/from', and '/to' time.");
+                    "An event requires a description, '/from', and '/to' time.");
         }
         LocalDateTime from = parseDateTime(fromText);
         LocalDateTime to = parseDateTime(toText);
@@ -91,13 +91,13 @@ public class Task {
         int afterIndex = command.indexOf(CONSTRAINT_AFTER_MARKER);
         if (afterIndex <= CONSTRAINT_COMMAND.length()) {
             throw new KothaException(
-                    "Your Majesty, a constraint requires a description and a '/after' trigger.");
+                    "A constraint requires a description and a '/after' trigger.");
         }
         String description = command.substring(CONSTRAINT_COMMAND.length(), afterIndex).trim();
         String after = command.substring(afterIndex + CONSTRAINT_AFTER_MARKER.length()).trim();
         if (description.isEmpty() || after.isEmpty()) {
             throw new KothaException(
-                    "Your Majesty, a constraint requires a description and a '/after' trigger.");
+                    "A constraint requires a description and a '/after' trigger.");
         }
         return new Constraint(description, after);
     }
@@ -135,7 +135,7 @@ public class Task {
             // Invalid input.
         }
         throw new KothaException(
-                "Your Majesty, use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm.");
+                "Use d/M, d/M/yy, or d/M/yyyy, optionally followed by HHmm.");
     }
 
     /** Returns the date represented by supported user input. */

@@ -28,7 +28,7 @@ public class MainWindow extends AnchorPane {
     @FXML private void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
         dialogContainer.getChildren()
-                .add(DialogBox.getBotDialog("Hello! I’m Kotha. What can I do for you master?", botImage));
+                .add(DialogBox.getBotDialog(chat.createGreeting(), botImage, chat.getLastResponseStyle()));
     }
 
     /** Adds the user's message and Kotha's response to the conversation. */
