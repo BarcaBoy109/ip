@@ -26,7 +26,7 @@ class ConstraintTest {
 
         assertEquals("submit report", task.getDescription());
         assertEquals(LocalDateTime.of(2027, 5, 16, 11, 59), task.getAfterDate());
-        assertEquals("[C][ ] submit report (after: May 16 2027 11:59AM)", task.toString());
+        assertEquals("[C][ ] submit report (after: May 16 2027 11:59am)", task.toString());
     }
 
     @Test

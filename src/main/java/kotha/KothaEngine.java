@@ -22,7 +22,12 @@ public class KothaEngine {
 
     /** Creates an engine with a supplied persona selector for deterministic testing. */
     KothaEngine(BooleanSupplier isRoyalSelector) {
-        storage = new Storage("data/kotha.txt");
+        this("data/kotha.txt", isRoyalSelector);
+    }
+
+    /** Creates an engine with explicit storage, primarily for isolated tests. */
+    KothaEngine(String storagePath, BooleanSupplier isRoyalSelector) {
+        storage = new Storage(storagePath);
         tasks = new TaskList(storage.loadTasks());
         this.isRoyalSelector = isRoyalSelector;
     }
@@ -43,6 +48,8 @@ public class KothaEngine {
             Parser.CommandType type = parser.parse(command);
             return executeCommand(type, command, persona);
         } catch (KothaException exception) {
+            return formatError(exception.getMessage(), persona);
+        } catch (IllegalArgumentException exception) {
             return formatError(exception.getMessage(), persona);
         } catch (RuntimeException exception) {
             return formatError("The command contains an invalid value.", persona);
