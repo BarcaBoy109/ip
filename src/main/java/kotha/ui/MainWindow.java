@@ -1,5 +1,7 @@
 package kotha.ui;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -10,17 +12,22 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
+import javafx.util.Duration;
 import kotha.KothaEngine;
+import kotha.Parser;
 
 /** Controller for Kotha's chatbot conversation window. */
 public class MainWindow extends AnchorPane {
     private static final int PROFILE_IMAGE_SIZE = 36;
+    private static final Duration BYE_CLOSE_DELAY = Duration.seconds(5);
 
     @FXML private ScrollPane scrollPane;
     @FXML private VBox dialogContainer;
     @FXML private TextField userInput;
     @FXML private Button profileButton;
     private final KothaEngine chat = new KothaEngine();
+    private final Parser parser = new Parser();
     private Image userImage = createDefaultImage(Color.STEELBLUE);
     private final Image botImage = new Image(
             MainWindow.class.getResource("/images/kotha-icon.png").toExternalForm());
@@ -41,6 +48,24 @@ public class MainWindow extends AnchorPane {
         dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input, userImage),
                 DialogBox.getBotDialog(response, botImage, chat.getLastResponseStyle()));
         userInput.clear();
+
+        if (parser.parse(input) == Parser.CommandType.BYE) {
+            closeWindowAfterGoodbye();
+        }
+    }
+
+    /** Closes the GUI after allowing the goodbye response to remain visible. */
+    private void closeWindowAfterGoodbye() {
+        userInput.setDisable(true);
+        PauseTransition closeTimer = new PauseTransition(BYE_CLOSE_DELAY);
+        closeTimer.setOnFinished(event -> {
+            Window window = userInput.getScene().getWindow();
+            if (window != null) {
+                window.hide();
+            }
+            Platform.exit();
+        });
+        closeTimer.play();
     }
 
     /** Lets the user choose the icon shown beside their messages. */
