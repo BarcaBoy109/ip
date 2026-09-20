@@ -20,6 +20,8 @@ repositories {
     mavenCentral()
 }
 
+def javafxVersion = '25'
+
 dependencies {
     String jUnitVersion = '5.14.4'
 
@@ -27,10 +29,20 @@ dependencies {
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
+
+    // JavaFX graphics contains platform-specific native libraries. The JavaFX
+    // Gradle plugin normally selects only the platform used to build the
+    // project, which makes a fat JAR produced on Windows unusable on Linux or
+    // macOS. Include the native graphics artifacts for all supported desktop
+    // platforms so the same JAR can select the appropriate native library at
+    // runtime.
+    runtimeOnly "org.openjfx:javafx-graphics:${javafxVersion}:win"
+    runtimeOnly "org.openjfx:javafx-graphics:${javafxVersion}:linux"
+    runtimeOnly "org.openjfx:javafx-graphics:${javafxVersion}:mac"
 }
 
 javafx {
-    version = '25'
+    version = javafxVersion
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
